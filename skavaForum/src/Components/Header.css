@@ -1,0 +1,122 @@
+html , body , #root{
+  width: 100%;
+  height: 100%;
+}
+.header {
+  position: fixed;
+  width: 100%;
+  height: 84px;
+  background: #003a70;
+  color: #FFF;
+}
+.h-icon{
+  float: left;
+  margin-left: 20px;
+}
+.h-image-icon
+{
+  width: 186px;
+  height: 81px;
+  background-size: 0px -15px;
+  background-repeat: no-repeat;
+}
+.s-bar
+{
+  float: left;
+  margin:24px 0px 24px 80px;
+  max-width: 364px;
+  width: 100%;
+}
+.in-search
+{
+  margin: 0;
+  height: 36px;
+  border-width: 1px;
+  border-color: #c8ccd0;
+  border-radius: 3px;
+  width: 100%;
+  font-size: 14px;
+  background-color: #FFF;
+  box-shadow: none;
+  color: #3b4045;
+  padding-left: 8px;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+.rightContent
+{
+  float: right;
+  vertical-align: middle;
+  margin: 33px 55px 0px;
+}
+.loginParent
+{
+  float: left;
+  margin-right: 10px;
+  cursor: pointer;
+}
+#signContainer
+{
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  position: absolute;
+  width: 300px;
+  height: auto;
+  top: calc(50% - 115px);
+  right: calc(50% - 150px);
+}
+.signin_modal
+{
+  padding: 20px;
+}
+.formContainer
+{
+  padding-bottom: 20px;
+  border-bottom: 1px solid #003a70;
+}
+.email , .pwd
+{
+  margin: 10px 0px;
+}
+.email input , .pwd input
+{
+  height: 20px;
+  padding-left: 5px;
+  width: 80%;
+}
+#login_submitbtn
+{
+  position: relative;
+  -webkit-appearance: none;
+  border: none;
+  color: #fff;
+  background-color: #003a70;
+  align-items: center;
+  padding: 0px 25px;
+  height: 35px;
+  font-family: Lato,sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+  border-radius: 0;
+  cursor: pointer;
+} 
+.createaccnt_container
+{
+  width: 100%;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 13px;
+  margin-top: 20px;
+}
+.dnttxt
+{
+  display: table;
+  float: left;
+  margin-right: 3px;
+}
+.createAccnt_link
+{
+  color: #003a70;
+  cursor: pointer;
+}
