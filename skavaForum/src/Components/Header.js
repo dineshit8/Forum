@@ -55,17 +55,24 @@ class Login extends Component {
     var enteredPwdValue = this.state.pwdInput;
     axios({
       method: 'post',
-      url: '/api/rest/login',
-      data: {"mailId":"dk@mail.com","passWord":"dineshIt9"},
+      url: 'http://localhost:4000/api/rest/login',
+      data: {"mailId":enteredEmailValue,"passWord":enteredPwdValue},
       config: { headers: {'Content-Type': 'application/json' }}
       })
       .then(function (response) {
-          //handle success
-          console.log(response);
+        console.log(response);
+        var paragraph = document.getElementById("errordom");
+        paragraph.value="";
+        if(response && response.data && response.data[0] && response.data[0].msg)
+        {
+         var manipulatedText = response.data[0].msg;
+        }
+        var text = document.createTextNode(manipulatedText);
+        paragraph.appendChild(text);
+        paragraph.style.display = 'block';
       })
       .catch(function (response) {
-          //handle error
-          console.log(response);
+         console.log(response);
       });
     console.log(this.state.emailInput);
   }
@@ -77,6 +84,7 @@ class Login extends Component {
               <div className="modal_header">
                 <div className="headerText">Sign in or Create an Account</div>
               </div>
+              <div id="errordom"></div>
               <div className="modal_container">
                 <form id="loginform" onSubmit={this.signinFunction}>
                   <div className="formContainer"> 

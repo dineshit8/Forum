@@ -88,7 +88,7 @@ exports.signIn = function(req , res)
             modelObj.getuser(manipulatedReq, res, function (err, result) {
                 if (err)
                 {
-                        res.status(400).json({ message: err });
+                        res.status(200).json({ message: err , "status":"Failure"});
                 } 
                 else 
                 {
