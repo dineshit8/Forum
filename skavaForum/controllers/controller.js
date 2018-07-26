@@ -30,7 +30,7 @@ exports.createAccount = function(req , res) {
             modelObj.getuser(manipulatedReq, res, function (err, result) {
             if (result && result.mailId)
             {
-                res.status(400).json({ message: "User already exists with the same mail id !","status":"Failure" });
+                res.status(200).json({ message: "User already exists with the same mail id !","status":"Failure" });
             } 
             else if(err && err == "User profile not found.")
             {
@@ -43,7 +43,7 @@ exports.createAccount = function(req , res) {
                         manipulatedReq.userId = "SKA"+(Math.floor(Math.random() * 90000) + 10000) + mail.split("@")[0].toUpperCase();
                         modelObj.addUser(manipulatedReq, res, function (err, result) {
                         if (err) {
-                        res.status(400).json({ message: 'Failure' });
+                        res.status(200).json({ message: 'Failure' });
                         } else {
                         res.status(200).json({ message: 'Your account has been created successfully' , "status":"Success"});
                         }
@@ -151,7 +151,7 @@ exports.addUserQuestion = function(req, res) {
             reqObj.postedDate = new Date();
             modelObj.addQuestion(reqObj, res, function(err, result) {
                 if (err) {
-                    res.status(400).json({ message: 'Failure' });
+                    res.status(200).json({ message: 'Failure' });
                 } else {
                     res.status(200).json({ message: "Question updated sucessfully", status: 'Success' });
                 }
@@ -188,7 +188,7 @@ exports.addUserAnswer = function(req, res) {
             reqObj.description = req.body.Description;
             modelObj.addAnswer(reqObj, res, function(err, result) {
                 if (err) {
-                    res.status(400).json({ message: 'Failure' });
+                    res.status(200).json({ message: 'Failure' });
                 } else {
                     res.status(200).json({ message: "Answer updated sucessfully", status: 'Success' });
                 }
@@ -212,7 +212,7 @@ exports.getAnswer = function(req, res) {
         } else {
             modelObj.getAnswerByQuesId(req, res, function(err, result) {
                 if (err) {
-                    res.status(400).json({ message: 'Failure' });
+                    res.status(200).json({ message: 'Failure' });
                 } else {
                     res.status(200).send(result);
                 }

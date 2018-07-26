@@ -65,7 +65,7 @@ html , body , #root{
   top: calc(50% - 115px);
   right: calc(50% - 150px);
 }
-.signin_modal
+.signin_modal , .createAccnt_modal
 {
   padding: 20px;
 }
@@ -74,11 +74,11 @@ html , body , #root{
   padding-bottom: 20px;
   border-bottom: 1px solid #003a70;
 }
-.email , .pwd
+.inputDiv
 {
   margin: 10px 0px;
 }
-.email input , .pwd input
+.inputDiv input
 {
   height: 20px;
   padding-left: 5px;
@@ -99,9 +99,10 @@ html , body , #root{
   font-style: normal;
   font-size: 15px;
   border-radius: 0;
+  margin-top: 10px;
   cursor: pointer;
 } 
-.createaccnt_container
+.createaccnt_container , .backtoLogin
 {
   width: 100%;
   font-weight: 400;
@@ -109,13 +110,17 @@ html , body , #root{
   font-size: 13px;
   margin-top: 20px;
 }
+.backtoLogin
+{
+  text-align: center;
+}
 .dnttxt
 {
   display: table;
   float: left;
   margin-right: 3px;
 }
-.createAccnt_link
+.createAccnt_link , .btoLogin
 {
   color: #003a70;
   cursor: pointer;
@@ -124,6 +129,13 @@ html , body , #root{
 {
   padding: 20px 0px 15px 0px;
   color: #FF0000;
-  display: none;
   font-size: 14px;
+}
+.displayNone
+{
+  display: none;
+}
+.displayBlock
+{
+  display: block;
 }

@@ -1,23 +1,39 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 
-var url = "mongodb://localhost:27017/";
+var url = "mongodb://localhost:27017";
 var dbo;
 
 //create mongoDB and collection 
-MongoClient.connect(url, function (err, db) {
-  dbo = db.db("forum");
-  dbo.createCollection("userinfo", function (err, res) {
-      if(err) throw err;
-    console.log("Userinfo Collection Created..!");
+
+MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("forum");
+    dbo.createCollection("userinfo", function(err, res) {
+      if (err) throw err;
+      console.log("Userinfo Collection Created..!");
+      db.close();
+    });
   });
-  dbo.createCollection("questions", function (err, res) {
-    console.log("questions Collection Created..!");
-  });
-  dbo.createCollection("answers", function (err, res) {
-    console.log("answers Collection Created..!");
-  });
-  db.close();
+
+MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("forum");
+    dbo.createCollection("questions", function(err, res) {
+      if (err) throw err;
+      console.log("Questions Collection Created..!");
+      db.close();
+    });
+});
+
+MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("forum");
+    dbo.createCollection("answers", function(err, res) {
+      if (err) throw err;
+      console.log("Answers Collection Created..!");
+      db.close();
+    });
 });
 
 exports.addUser = function(req, res, cbk) 
