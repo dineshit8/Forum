@@ -175,3 +175,25 @@ exports.getAnswerByQuesId = function(req, res, cbk)
         dbo.close();
     });
 }
+exports.forgotPwd = function(req, res, cbk) 
+{
+    MongoClient.connect(url, function (err, db) {
+        if(err) throw err;
+        dbo = db.db("forum");
+        const cursor = dbo.collection('userinfo').find({mailId : req.mailId}).toArray(function(err,results)
+        {
+            var userProfile = results;
+            if(userProfile.length && userProfile[0])
+            {
+                //cbk(false,userProfile[0]);
+                var myquery = { mailId:userProfile[0].mailId };  
+                    var newvalues = { $set: {resetPasswordToken: req.token, resetPasswordExpires: Date.now() + 3600000 }};  
+                    dbo.collection("userinfo").updateOne(myquery, newvalues, function(err, res) {  
+                        if (err) throw err;  
+                        console.log("1 document updated");  
+                    });  
+                    cbk(false,userProfile[0]);
+            }
+        });
+    });
+} 

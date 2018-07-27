@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var routes = require("./routes/routes.js");
 var cookieParser = require('cookie-parser'); 
 const expressValidator = require('express-validator');
+var nodemailer = require('nodemailer');
 var app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());

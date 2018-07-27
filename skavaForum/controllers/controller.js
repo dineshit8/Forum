@@ -98,7 +98,7 @@ exports.signIn = function(req , res)
                         {
                            // res.cookie('name' ,"dines" , {maxAge : 9999});
                             //res.cookie('s_Ts_cookie',1, { path:'/' , maxAge: 900000, httpOnly: true });
-                            res.cookie('s_Ts_cookie', 1, {expire : 9999 , httpOnly: true});
+                            res.cookie('s_Ts_cookie', 1, {expire : 9999 , httpOnly: true , Path : "/"});
                             res.status(200).json({"user_name" : result.userName ,"userId": result.userId , message : "You have been logged into your account successfully.", "status":"Success"});
                         }
                         else
@@ -119,7 +119,7 @@ exports.signIn = function(req , res)
 exports.signout = function(req , res) 
 {
     //res.cookie('s_Ts_cookie','', {httpOnly: true });
-    res.cookie('s_Ts_cookie', 0,{ path:'/'});
+    res.cookie('s_Ts_cookie', 0,{ Path:'/'});
     //res.cookie('s_Ts_cookie').destroy();
     res.status(200).send({message:"Logout Success","status":"success"});
 }
@@ -222,6 +222,56 @@ exports.getAnswer = function(req, res) {
         res.status(400).json({ message: 'Bad Request', status: 'Failure' });
     }
 }
+exports.forgotPwd = function(req,res)
+{
+    var contype = req ? req.headers['content-type'] : "";
+    if (contype && contype.indexOf('application/json') >= 0) {
+        var requestBody = req.checkBody;
+        requestBody('mailId', 'Enter a valid Mail Id').isEmail();
+        var errors = req.validationErrors();
+        if(errors)
+        {
+            res.status(200).json(errors)
+        }
+        else
+        {
+            var manipulatedReq = {};
+            manipulatedReq.mailId = req.body.mailId;
+            generateToken(function(res)
+            {
+                manipulatedReq.token = res;
+            })
+            modelObj.forgotPwd(manipulatedReq, res, function(err, result) {
+               if(result)
+               {
+                var smtpTransport = nodemailer.createTransport(
+                    {  
+                        service: 'gmail',  
+                        auth: {  
+                        user: "riderdinesh2610@gmail.com",  
+                        pass: "9976059148"  
+                        }  
+                    }); 
+                const mailOptions = {  
+                    to: 'riderdinesh2610@gmail.com',  
+                    from: 'passwordreset@demo.com',  
+                    subject: 'Node.js Password Reset',  
+                    text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +  
+                        'Please click on the following link, or paste this into your browser to complete the process:\n\n' +  
+                        'http://' + req.headers.host + '/reset/' + manipulatedReq.token + '\n\n' +  
+                        'If you did not request this, please ignore this email and your password will remain unchanged.\n'  
+                }; 
+                smtpTransport.sendMail(mailOptions, function(err) {                 
+                    console.log("HI:");  
+                    res.json({status : 'success', message : 'An e-mail has been sent to  with further instructions.'});              
+                    //done(err, 'done');  
+                });  
+               }
+            });
+        }
+    }
+}
+
 
 // custom functions
 function hashPwd(pwd , cbk)
@@ -235,4 +285,12 @@ function comparePwd(pwd , hash , cbk)
     bcrypt.compare(pwd, hash, function(err, res) {
        cbk(res);
     });
+}
+function generateToken(cbk)
+{
+    crypto.randomBytes(20, function(err, buf) {  
+        var token = buf.toString('hex');  
+        cbk(token)
+    }); 
+   
 }
