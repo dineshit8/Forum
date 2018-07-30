@@ -8,6 +8,8 @@ html , body , #root{
   height: 84px;
   background: #003a70;
   color: #FFF;
+  z-index: 10;
+
 }
 .h-icon{
   float: left;
@@ -196,4 +198,10 @@ html , body , #root{
   background-color: darkgrey;
   color: black;
   border-radius: 5px;
+}
+.content{
+  position: absolute;
+  top: 85px;
+  padding: 40px;
+  width: 95%;
 }

@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import logo from './logo2.png';
 import ReactDOM from 'react-dom';
-import './Header.css';
 import axios from 'axios';
+import './Header.css';
+import Home from './Home';
 import PostQuestion from './PostQuestion';
 import { BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import Cookies from 'js-cookie';
+
 class Header extends Component {
   constructor(props)
   {
     super(props);
-    this.state = {showMask : {display:"none"} , maskFlag : false , signinshowHide : {display:"none"}};
+    this.state = {showMask : {display:"none"} , maskFlag : false , signinshowHide : {display:"none"} , userId : Cookies.get('userId')};
     this.maskFunction = this.maskFunction.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
-    
+    this.CheckSession = this.CheckSession.bind(this);
   }
   render() {
     return (<Router>
@@ -20,7 +23,7 @@ class Header extends Component {
       <div className="mask" onClick={this.maskFunction} style={this.state.showMask}></div>
         <div className="header">
           <div className="leftcontent">
-            <div className="h-icon"><img className="h-image-icon" src={logo}></img></div>
+            <div className="h-icon"><Link to="/"><img className="h-image-icon" src={logo}></img></Link></div>
               <form id="search" action="#" method="post" className="s-bar">
                 <div className="searchBar">
                   <input type="text" name="searchinput" placeholder="Search" maxLength="60" className="in-search" />
@@ -29,25 +32,36 @@ class Header extends Component {
           </div>
           <div className="rightContent">
             <div className="loginParent">
-              <div className="login" onClick={this.handleLogin}>Login</div>
+            { this.state.userId ? 
+              <div className="profile" onClick={this.handleLogin}> Profile </div>
+              : 
+              <div className="login" onClick={this.handleLogin}> Login </div>
+            }
             </div>
-            <div className="QuestionParent">
-              <div className="askQuestion">
-              <Link to="/PostQuestion">Ask Question</Link>
+            { this.state.userId ? 
+              <div className="QuestionParent">
+                <div className="askQuestion">
+                <Link to="/PostQuestion">Ask Question</Link>
+                </div>
               </div>
-            </div>
+            : ""}
           </div>
         </div>
         <div id = "signContainer" style={this.state.signinshowHide}></div>
           <div className="content">
+            <Route exact path="/" component={Home}/>
             <Route path="/PostQuestion" component={PostQuestion}/>
           </div>
       </div>
       </Router>);
   }
+  CheckSession(a)
+  {
+    console.log(a)
+  }
   handleLogin() {
     this.maskFunction();
-      ReactDOM.render(<Login/>,document.getElementById('signContainer'));
+    ReactDOM.render(<Login/>,document.getElementById('signContainer'));
   };
   handleAskQuestion() {
     ReactDOM.render(<PostQuestion/>,document.getElementById('id_askQuestion'));
@@ -137,7 +151,7 @@ class Login extends Component {
         }
         else if(responseData && responseData.message)
         {
-          if(responseData.status && responseData.status == "Success")
+          if(responseData.status && responseData.status === "Success")
           {
             window.location.reload();
           }

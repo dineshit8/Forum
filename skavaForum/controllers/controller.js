@@ -96,9 +96,8 @@ exports.signIn = function(req , res)
                     {
                         if(response)
                         {
-                           // res.cookie('name' ,"dines" , {maxAge : 9999});
-                            //res.cookie('s_Ts_cookie',1, { path:'/' , maxAge: 900000, httpOnly: true });
-                            res.cookie('s_Ts_cookie', 1, {expire : 9999 , httpOnly: true , Path : "/"});
+                            //res.cookie('s_Ts_cookie', 1, {maxAge: 300000, Path : "/"});
+                            res.cookie('userId',result.userId,{maxAge:300000,Path:"/"});
                             res.status(200).json({"user_name" : result.userName ,"userId": result.userId , message : "You have been logged into your account successfully.", "status":"Success"});
                         }
                         else
