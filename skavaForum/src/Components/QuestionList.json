@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Microservice",
+    "question": "What exactly are microservices, and why are they needed?",
+    "description": "Microservices are a new software development pattern which has grown out of the recent trends in software development and software management practices, in order to increase the speed and efficiency of developing and managing software solutions."
+  },
+  {
+    "id": 2,
+    "title": "7.5 Release",
+    "question": "Why 7.5 release is going this much hectic?",
+    "description": ""
+  },
+  {
+    "id": 3,
+    "title": "Sprint",
+    "question": "What is the duration of a scrum sprint?",
+    "description": "Generally, the duration of a scrum sprint (scrum cycle) depends upon the size of project and team working on it. The team size may vary from 3-9 members. In general, a scrum script complete in 3-4 weeks. Thus, on an average, the duration of a scrum sprint (scrum cycle) is 4 weeks. This type of sprint-based Agile scrum interview questions is very common in an agile or scrum master interview."
+  },
+  {
+    "id": 4,
+    "title": "Review",
+    "question": "Mentor is assigned for each individual, 50% review should be done by mentor, why?",
+    "description": ""
+  },
+  {
+    "id": 5,
+    "title": "Stand Up meeting",
+    "question": "Why stand-up is held for?",
+    "description": "The daily stand-up is an everyday meeting (most preferably held in the morning) in which the whole team meets for almost 15 minutes to find answer to the following three questions – What was done yesterday?, What is your plan for today?, Is there any impediment or block that restricts you from completing your task?. The daily stand-up is an effective way to motivate the team and make them set a goal for the day."
+  },
+  {
+    "id": 6,
+    "title": "Time Limit",
+    "question": "Why regular timing is not followed. why office culture is entierly changing?",
+    "description": ""
+  }
+]
