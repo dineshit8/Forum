@@ -1,8 +1,7 @@
-.profileTitle{
-    color: #000;
-    font-size: 25px;
+.profile a{
+    color: #fff;
     margin-bottom: 20px;
-    font-weight: bold;
+    text-decoration: none;
 }
 .profileIcon{
     width: 240px;

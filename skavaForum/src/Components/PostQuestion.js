@@ -2,17 +2,21 @@ import React, { Component } from 'react';
 import './PostQuestion.css';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
-class PostQuestion extends Component {
+import { BrowserRouter as Router, Route, Link , Redirect} from 'react-router-dom';
+import Cookies from 'js-cookie';
+import Home from './Home';
+export class PostQuestion extends Component {
   constructor(props)
   {
-    super(props);
-  this.state = {title:"",tags:"",quesId:"",userId:"",quesDescription:"",showErrordomQuestionTitle:{display:"none"},showErrordomQuestionDescription:{display:"none"},addedTags:{display:"none"},showErrordomTag:{display:"none"}};
+  super(props);
+  this.state = {title:"",tags:"",quesId:"",userId:"",quesDescription:"",showErrordomQuestionTitle:{display:"none"},showErrordomQuestionDescription:{display:"none"},addedTags:{display:"none"},showErrordomTag:{display:"none"} , userId : Cookies.get('userId')  };
   this.handleQuestionTitle = this.handleQuestionTitle.bind(this);
   this.handleuserId = this.handleuserId.bind(this); 
   this.handlequesDescription = this.handlequesDescription.bind(this); 
   this.handleClick = this.handleClick.bind(this);
   this.handleTagList = this.handleTagList.bind(this);
   this.addQuestion = this.addQuestion.bind(this);
+  
 }
 //handleTagList = (e) =>{this.setState({tags:e.target.value})}
 handleQuestionTitle(e)
@@ -40,6 +44,8 @@ handleClick(e){
     }
   }
 render() {
+  if(this.state.userId)
+  {
     return (
         <div className="cls_postQuestion">
           <div className="pageTitle">Post Your New Question</div>
@@ -76,6 +82,11 @@ render() {
         </div>
       )
     }
+    else
+    {
+       return  <Redirect to='/'  />
+    }
+  }
   addQuestion(event)
     {
     event.preventDefault();
