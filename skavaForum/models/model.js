@@ -197,3 +197,40 @@ exports.forgotPwd = function(req, res, cbk)
         });
     });
 } 
+
+exports.getRelatedQuest = function(req, res, cbk) {
+    var searchTerm = req.body.keyWords;
+    var limit = req.body.limit ? req.body.limit : 5;
+    var pageNumber = req.body.pageNumber ? req.body.pageNumber : 1;
+    MongoClient.connect(url, function (err, db) {
+        if(err) throw err;
+        dbo = db.db("forum");
+        dbo.collection("questions").createIndex({
+        title: "text"
+        }, function(err, indexName) {
+        if(err) {
+            console.log("Error while indexing..");
+        }
+        else {
+            console.log(indexName);
+        }
+        });
+        dbo.collection("questions")
+        .find({$text: {$search: searchTerm}}, {score: {$meta: "textScore"}})
+        .sort({score: {$meta: "textScore"}})
+        .project({ score: { $meta: "textScore" } })
+        .limit(limit)
+        .skip((pageNumber - 1) * limit)
+        .toArray(function(err, result){
+        if(err) {
+            console.log("Somthing went wrong");
+            cbk(err);
+        }
+        else {
+            console.log(result);
+            cbk(null, result);
+        }
+        });
+        db.close();
+    });
+  }

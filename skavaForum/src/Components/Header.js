@@ -5,17 +5,25 @@ import axios from 'axios';
 import './Header.css';
 import Home from './Home';
 import PostQuestion from './PostQuestion';
+import Profile from './Profile';
 import { BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import Cookies from 'js-cookie';
+import Search from './Search';
 
 class Header extends Component {
   constructor(props)
   {
     super(props);
-    this.state = {showMask : {display:"none"} , maskFlag : false , signinshowHide : {display:"none"} , userId : Cookies.get('userId')};
+    this.state = {showMask : {display:"none"} , maskFlag : false , signinshowHide : {display:"none"} , userId : Cookies.get('userId'), searchTerm: ""};
     this.maskFunction = this.maskFunction.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.CheckSession = this.CheckSession.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+    this.getSearchTerm = this.getSearchTerm.bind(this);
+  }
+  getSearchTerm(e)
+  {
+    this.setState({searchTerm:e.target.value})
   }
   render() {
     return (<Router>
@@ -24,16 +32,16 @@ class Header extends Component {
         <div className="header">
           <div className="leftcontent">
             <div className="h-icon"><Link to="/"><img className="h-image-icon" src={logo}></img></Link></div>
-              <form id="search" action="#" method="post" className="s-bar">
+              <form id="search" className="s-bar" onSubmit={this.handleSearch}>
                 <div className="searchBar">
-                  <input type="text" name="searchinput" placeholder="Search" maxLength="60" className="in-search" />
+                  <input type="text" name="searchinput" placeholder="Search" maxLength="60" className="in-search" onChange={this.getSearchTerm} />
                 </div>
               </form>
           </div>
           <div className="rightContent">
             <div className="loginParent">
             { this.state.userId ? 
-              <div className="profile" onClick={this.handleLogin}> Profile </div>
+              <div className="profile"><Link to="/Profile">Profile</Link></div>
               : 
               <div className="login" onClick={this.handleLogin}> Login </div>
             }
@@ -48,9 +56,11 @@ class Header extends Component {
           </div>
         </div>
         <div id = "signContainer" style={this.state.signinshowHide}></div>
-          <div className="content">
+          <div className="content" id="searchResults">
             <Route exact path="/" component={Home}/>
+            <Route path="/Profile" component={Profile}/>
             <Route path="/PostQuestion" component={PostQuestion}/>
+            <Route path="/Search" component={Search}/>
           </div>
       </div>
       </Router>);
@@ -77,7 +87,27 @@ class Header extends Component {
       this.setState({showMask : {display:"block"} , maskFlag : true , signinshowHide : {display:"block"}})
     }
   }
- 
+  handleSearch(event) {
+    event.preventDefault();
+    var searchTerm = this.state.searchTerm;
+    var self = this;
+    axios({
+        method: 'post',
+        url: 'http://localhost:4000/api/rest/getRelatedQuestions',
+        data: {"keyWords":searchTerm},
+        config: { headers: {'Content-Type': 'application/json' }},
+        credentials: 'same-origin'
+      })
+      .then((response) => {
+        console.log(response);  
+        self.setState({data : response && response.data ? response.data : ""});
+        //<Search searchData = {self.state.data}/>;
+        ReactDOM.render(<Search searchData = {self.state.data}/>,document.getElementById('searchResults'));
+      })
+      .catch(function (response) {
+         console.log(response);
+      });
+  }
 }
 class Login extends Component {
   constructor(props)
@@ -113,7 +143,7 @@ class Login extends Component {
                       <input type="text" name="emailInput" placeholder="Email" value={this.state.emailInput} onChange={this.handleEmailchange} maxLength="60" className="in-email" />
                     </div>
                     <div className="pwd inputDiv">
-                      <input type="text" name="pwdInput" placeholder="Password" value={this.state.pwdInput} onChange={this.handlepwdchange} maxLength="60" className="in-pwd" />
+                      <input type="password" name="pwdInput" placeholder="Password" value={this.state.pwdInput} onChange={this.handlepwdchange} maxLength="60" className="in-pwd" />
                     </div>
                     <button type="submit" id="login_submitbtn">Sign In</button>
                   </div>
@@ -223,7 +253,7 @@ class CreateAccount extends Component {
                       <input type="text" name="mailInput" placeholder="Mail" value={this.state.mailInput} onChange={this.handleMailchange} maxLength="60" className="in-mailid" />
                     </div>
                     <div className="pwd inputDiv">
-                      <input type="text" name="pwdInput" placeholder="Password" value={this.state.pwdInput} onChange={this.handlePwdchange} maxLength="60" className="in-pwd" />
+                      <input type="password" name="pwdInput" placeholder="Password" value={this.state.pwdInput} onChange={this.handlePwdchange} maxLength="60" className="in-pwd" />
                     </div>
                     <div className="tags inputDiv">
                       <input type="text " name="tagInput" placeholder="Tags" value={this.state.tagInput} onChange={this.handleTagchange} maxLength="60" className="in-tags" />

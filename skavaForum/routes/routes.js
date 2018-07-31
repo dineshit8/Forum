@@ -8,5 +8,6 @@ var appRouter = function(app){
     app.route("/api/rest/addUserAnswer").post(controllerObj.addUserAnswer);
     app.route("/api/rest/forgotPassword").post(controllerObj.forgotPwd);
     app.route("/api/rest/getAnswer").post(controllerObj.getAnswer);
+    app.route("/api/rest/getRelatedQuestions").post(controllerObj.getRelatedQuestion);
 }
 module.exports = appRouter;
