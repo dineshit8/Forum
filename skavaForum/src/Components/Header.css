@@ -67,11 +67,11 @@ html , body , #root{
   top: calc(50% - 115px);
   right: calc(50% - 150px);
 }
-.signin_modal , .createAccnt_modal
+.signin_modal , .createAccnt_modal ,.forgotPwd_model
 {
   padding: 20px;
 }
-.formContainer
+.formContainer , .modal_container
 {
   padding-bottom: 20px;
   border-bottom: 1px solid #003a70;
@@ -86,7 +86,7 @@ html , body , #root{
   padding-left: 5px;
   width: 80%;
 }
-#login_submitbtn
+#login_submitbtn , #forgotpwd_button
 {
   position: relative;
   -webkit-appearance: none;
@@ -104,7 +104,7 @@ html , body , #root{
   margin-top: 10px;
   cursor: pointer;
 } 
-.createaccnt_container , .backtoLogin
+.createaccnt_container , .backtoLogin , .forgot_pwd
 {
   width: 100%;
   font-weight: 400;
@@ -116,16 +116,20 @@ html , body , #root{
 {
   text-align: center;
 }
-.dnttxt
+.dnttxt , .forgot_pwdTxt
 {
   display: table;
   float: left;
   margin-right: 3px;
 }
-.createAccnt_link , .btoLogin
+.createAccnt_link , .btoLogin , .forgot_pwdHere
 {
   color: #003a70;
   cursor: pointer;
+}
+.orLabel{
+  margin-top: 20px;
+  text-align: center;
 }
 #errordom
 {

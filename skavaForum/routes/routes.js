@@ -9,5 +9,7 @@ var appRouter = function(app){
     app.route("/api/rest/forgotPassword").post(controllerObj.forgotPwd);
     app.route("/api/rest/getAnswer").post(controllerObj.getAnswer);
     app.route("/api/rest/getRelatedQuestions").post(controllerObj.getRelatedQuestion);
+	app.route("/reset/:token").get(controllerObj.resetPassword);
+    app.route("/reset/updatePassword").post(controllerObj.updatePaswword);
 }
 module.exports = appRouter;

@@ -194,6 +194,10 @@ exports.forgotPwd = function(req, res, cbk)
                     });  
                     cbk(false,userProfile[0]);
             }
+            else
+            {
+                cbk("Email Id Not Exists !")
+            }
         });
     });
 } 
@@ -233,4 +237,40 @@ exports.getRelatedQuest = function(req, res, cbk) {
         });
         db.close();
     });
-  }
+}
+
+exports.resetPassword = function(req, res , cbk)
+{
+    MongoClient.connect(url, function (err, db) {
+        if(err) throw err;
+        dbo = db.db("forum");
+        const cursor = dbo.collection('userinfo').findOne({resetPasswordToken : req.params.token , resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {  
+            if (!user) {  
+                res.json({message: 'Password reset token is invalid or has expired.'});  
+            }
+            else
+            {
+                cbk(false,user);
+            }
+        });
+    });
+}
+exports.updatePaswword = function(req,res,cbk)
+{
+    MongoClient.connect(url,function(err,db)
+    {
+        if(err) throw err;
+        dbo = db.db("forum");
+        dbo.collection('userinfo').findOne({resetPasswordToken: req.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {  
+            if (!user) {  
+                res.json({message: 'Password reset token is invalid or has expired.'});  
+            }  
+            var myquery = { resetPasswordToken: req.token };  
+            var newvalues = { $set: {passWord: req.passkey,resetPasswordToken: null, resetPasswordExpires: null, modifiedDate : Date(Date.now()) }};  
+            dbo.collection('userinfo').updateOne(myquery, newvalues, function(err, result) {  
+                if (err) throw err;  
+                cbk(false , "success");
+            });  
+        });
+    });
+}

@@ -6,9 +6,11 @@ import './Header.css';
 import Home from './Home';
 import PostQuestion from './PostQuestion';
 import Profile from './Profile';
-import { BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link , Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Search from './Search';
+
+import ResetPassword from './ResetpasswordForm';
 
 class Header extends Component {
   constructor(props)
@@ -61,6 +63,7 @@ class Header extends Component {
             <Route path="/Profile" component={Profile}/>
             <Route path="/PostQuestion" component={PostQuestion}/>
             <Route path="/Search" component={Search}/>
+            <Route path="/reset" component={ResetPassword}/>
           </div>
       </div>
       </Router>);
@@ -152,13 +155,17 @@ class Login extends Component {
                   <div className="dnttxt"> Don't have an account? </div>
                   <div className="createAccnt_link" onClick={this.handleCreateAccnt} > Create an Account</div>
                 </div>
+                <div className="orLabel"> Or </div>
+                <div className="forgot_pwd">
+                    <div className = "forgot_pwdTxt"> Forgot your Password ? </div>
+                    <div className = "forgot_pwdHere" onClick = {this.handleForgotPwd}> Click Here </div>
+                </div>
               </div>
             </div>
           </div>
       </div>
     );
   }
-
   signinFunction(event)
   {
     event.preventDefault();
@@ -199,6 +206,10 @@ class Login extends Component {
   handleCreateAccnt()
   {
     ReactDOM.render(<CreateAccount/>,document.getElementById('signContainer'));
+  }
+  handleForgotPwd()
+  {
+    ReactDOM.render(<ForgotPwd/>,document.getElementById('signContainer'));
   }
 }
 class CreateAccount extends Component {
@@ -304,5 +315,75 @@ class CreateAccount extends Component {
     });
   }
 }  
+
+class ForgotPwd extends Component
+{
+  constructor(props)
+  {
+      super(props);
+      this.state = {emailValue : "",showErrorDom :{display:"none"} , errorValue : ""};
+      this.forgotPwdfunction = this.forgotPwdfunction.bind(this);
+      this.handlemail = this.handlemail.bind(this);
+  }
+  handlemail(e)
+  {
+    this.setState({emailValue : e.target.value});
+  }
+  render()
+  {
+    return(
+      <div>
+          <div className="forgeotPwdForm">
+            <div className="forgotPwd_model">
+              <div className="modal_header">
+                <div className="headerText">Forgot Password Form</div>
+              </div>
+              <div id="errordom" style={this.state.showErrorDom}>{this.state.errorValue}</div>
+              <div className="modal_container">
+                <form id="forgotpwd_form" onSubmit={this.forgotPwdfunction}>
+                  <div className="pwdResetformContainer"> 
+                    <div className="emailid inputDiv">
+                      <input type="text" name="email" placeholder="Email" value={this.state.emailValue} onChange={this.handlemail} maxLength="60" className="in-email" />
+                    </div>
+                  </div>
+                  <button type="submit" id="forgotpwd_button">Send Email</button>
+                </form>
+              </div>
+            </div>
+          </div>
+       </div>
+    );
+  }
+  forgotPwdfunction(event)
+  {
+    event.preventDefault();
+    var emailValue = this.state.emailValue;
+    var _self = this;
+    axios({
+      method: 'post',
+      url: 'http://localhost:4000/api/rest/forgotPassword',
+      data: {"mailId":emailValue},
+      config: { headers: {'Content-Type': 'application/json' }},
+      credentials: 'same-origin'
+      })
+      .then(function (response) {
+          if(response && response.data && response.data.status && response.data.status == "success")
+          {
+            window.location.reload();
+          }
+          else
+          {
+            var responseData = response && response.data ? response.data : "";
+            if(responseData && responseData.message)
+            _self.setState({errorValue: responseData.message});
+            _self.setState({showErrorDom:{display:'block'}});
+          }
+      })
+      .catch(function (response) {
+          //handle error
+          console.log(response);
+      });
+  }
+}
 
 export default Header;

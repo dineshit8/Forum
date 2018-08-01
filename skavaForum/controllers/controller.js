@@ -1,5 +1,7 @@
 var modelObj = require("../models/model.js");
 const bcrypt = require('bcrypt');
+var crypto = require('crypto');
+var nodemailer = require('nodemailer');
 exports.getWelcomeMsg = function(req,res){
     res.status(200).send({message:"Welcome to Skava Forum"});
 }
@@ -118,7 +120,7 @@ exports.signIn = function(req , res)
 exports.signout = function(req , res) 
 {
     //res.cookie('s_Ts_cookie','', {httpOnly: true });
-    res.cookie('s_Ts_cookie', 0,{ Path:'/'});
+    res.cookie('userId', 0,{ Path:'/'});
     //res.cookie('s_Ts_cookie').destroy();
     res.status(200).send({message:"Logout Success","status":"success"});
 }
@@ -241,28 +243,31 @@ exports.forgotPwd = function(req,res)
                 manipulatedReq.token = res;
             })
             modelObj.forgotPwd(manipulatedReq, res, function(err, result) {
-               if(result)
+               if(err)
+               {
+                   res.status(200).json({"status":"Failure",message : err})
+               }
+                if(result)
                {
                 var smtpTransport = nodemailer.createTransport(
                     {  
                         service: 'gmail',  
                         auth: {  
                         user: "riderdinesh2610@gmail.com",  
-                        pass: "9976059148"  
+                        pass: "crazyias"  
                         }  
                     }); 
                 const mailOptions = {  
-                    to: 'riderdinesh2610@gmail.com',  
+                    to: req.body.mailId,  
                     from: 'passwordreset@demo.com',  
                     subject: 'Node.js Password Reset',  
                     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +  
                         'Please click on the following link, or paste this into your browser to complete the process:\n\n' +  
-                        'http://' + req.headers.host + '/reset/' + manipulatedReq.token + '\n\n' +  
+                        'http://localhost:3000/reset/' + manipulatedReq.token + '\n\n' +  
                         'If you did not request this, please ignore this email and your password will remain unchanged.\n'  
                 }; 
                 smtpTransport.sendMail(mailOptions, function(err) {                 
-                    console.log("HI:");  
-                    res.json({status : 'success', message : 'An e-mail has been sent to  with further instructions.'});              
+                    res.json({status : 'success', message : 'An e-mail has been sent to the above mail-Id with further instructions.'});              
                     //done(err, 'done');  
                 });  
                }
@@ -294,7 +299,40 @@ exports.getRelatedQuestion = function(req,res) {
         res.status(400).json({ message:'Bad Request',status: 'Failure'});
     }
 }
-
+exports.resetPassword = function(req,res)
+{
+    if(req)
+    {
+        modelObj.resetPassword(req, res, function(err, result) {
+            if (err) {
+                res.status(200).json({ message: 'Failure' });
+            } else {
+                res.status(200).send({status : 'success' , "message":"Password reset accepted."});
+            }
+        });
+    }
+}
+exports.updatePaswword = function(req,res)
+{
+    if(req)
+    {
+        hashPwd(req.body.Password , function(response)
+        {
+            var manipulatedReq = {};
+            manipulatedReq.token = req.body.token;
+            manipulatedReq.passkey = response;
+            modelObj.updatePaswword(manipulatedReq , res ,function(err,result)
+            {
+                if(err){
+                    res.status(200).json({message : 'Failure'});
+                }
+                else{
+                    res.status(200).send({status: 'success' , 'message' : "Paswword resetted successfully."});
+                }
+            });
+        });
+    }
+}
 
 // custom functions
 function hashPwd(pwd , cbk)
