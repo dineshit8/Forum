@@ -3,9 +3,15 @@ import data from "./QuestionList.json";
 import "./Home.css";
 
 export class Home extends Component {
+	constructor(props)
+	{
+		super(props);
+		this.state = {data:""};
+	}
 
 render(){
 	return(
+		 this.state.data ?
             <div className="homePage">
             	<div className="questContainer">
 	                <div className="questTitle">Questions</div>
@@ -38,7 +44,10 @@ render(){
             		</div>
             	</div>
            </div>
-        )
+		   : ""
+		)
 	}
+
+	
 }
 export default Home;

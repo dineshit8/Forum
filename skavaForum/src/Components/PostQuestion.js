@@ -88,10 +88,10 @@ render() {
     }
   }
   addQuestion(event)
-    {
+  {
     event.preventDefault();
     var QuestionTitle = this.state.title;
-    var userId = "12";
+    var userId = this.state.userId;
     var quesDescription = this.state.quesDescription;
     var QuestionId = Math.floor(Math.random() * 90000) + 10000;
     var tagArr = this.state.tags;

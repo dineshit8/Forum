@@ -86,7 +86,7 @@ html , body , #root{
   padding-left: 5px;
   width: 80%;
 }
-#login_submitbtn , #forgotpwd_button
+#login_submitbtn , #forgotpwd_button , #post_submitbtn , .btn-primary
 {
   position: relative;
   -webkit-appearance: none;

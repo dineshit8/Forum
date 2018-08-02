@@ -333,6 +333,18 @@ exports.updatePaswword = function(req,res)
         });
     }
 }
+exports.getQuestions = function(req, res) {
+    modelObj.getQuestions(manipulatedReq, res, function(err, result) {
+        if(err)
+        {
+            res.status(200).json({"status":"Failure",message : err})
+        }
+        else
+        {
+            res.status(200).json({"status":"success",message : err})
+        }
+    });
+}
 
 // custom functions
 function hashPwd(pwd , cbk)

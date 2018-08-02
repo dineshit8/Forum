@@ -9,7 +9,7 @@ import Profile from './Profile';
 import { BrowserRouter as Router, Route, Link , Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Search from './Search';
-
+import Qa from './Qapage';
 import ResetPassword from './ResetpasswordForm';
 
 class Header extends Component {
@@ -64,6 +64,7 @@ class Header extends Component {
             <Route path="/PostQuestion" component={PostQuestion}/>
             <Route path="/Search" component={Search}/>
             <Route path="/reset" component={ResetPassword}/>
+            <Route path="/qa" component={Qa}/>
           </div>
       </div>
       </Router>);
