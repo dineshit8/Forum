@@ -1,0 +1,95 @@
+.pagecontainer
+{
+    max-width: 75%;
+    float: left;
+    height: 100%;
+    border-right: 1px solid #003a70;
+}
+.qaContainer .qtitle , .qDescription
+{
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+.qDescription , .qaContainer
+{
+    width: 100%;
+}
+.qaContainer , .qtitlecontainer
+{
+    border-bottom: 1px solid #e4e6e8;
+}
+.tags div
+{
+    float: left;
+    margin-right: 10px;
+    color: #33658a;
+    background-color: #cee0ed;
+    text-align: center;
+}
+.rightcontent
+{
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.tagcontainer
+{
+    max-width: 24%;
+    display: inline-block;
+    margin-left:15px;
+}
+.content > div
+{
+    height: 100%;
+    display: inline-block;
+}   
+.noOfAnswers
+{
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e4e6e8;
+}
+.votes
+{
+    display: inline;
+    float: left;
+    height: 20px;
+}
+.answer p , .postAns textarea
+{
+    margin: 0px;
+}
+.answer
+{
+    display: table;
+    margin: 0px 25px;
+}
+.answerDesc , .qDescription, .innerContainer , .postAnswer ,.relatedtagCont ,.tagValues
+{
+    margin-top: 20px;
+}
+.answerDesc
+{
+    padding-bottom: 20px;
+    display: inline-block;
+    border-bottom: 3px solid #e4e6e8;
+}
+.postedInfo
+{
+    float:right;
+    margin-right: 25px;
+    font-size: 13px;
+}
+.postedDate
+{
+    margin-left: 5px;
+}
+.yourAns
+{
+    margin-bottom: 10px;
+}
+.description
+{
+    max-width: 75%;
+}
