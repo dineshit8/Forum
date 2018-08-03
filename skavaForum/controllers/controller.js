@@ -44,11 +44,11 @@ exports.createAccount = function(req , res) {
                         var mail = manipulatedReq.mailId;
                         manipulatedReq.userId = "SKA"+(Math.floor(Math.random() * 90000) + 10000) + mail.split("@")[0].toUpperCase();
                         modelObj.addUser(manipulatedReq, res, function (err, result) {
-                        if (err) {
-                        res.status(200).json({ message: 'Failure' });
-                        } else {
-                        res.status(200).json({ message: 'Your account has been created successfully' , "status":"Success"});
-                        }
+                            if (err) {
+                            res.status(200).json({ message: 'Failure' });
+                            } else {
+                            res.status(200).json({ message: 'Your account has been created successfully' , "status":"Success"});
+                            }
                         });
                     }
                     else
@@ -130,9 +130,6 @@ exports.addUserQuestion = function(req, res) {
     console.log("Question Content type : " + contype);
     if (contype && contype.indexOf('application/json') >= 0) {
         var requestBody = req.checkBody;
-        if (requestBody('QuestionId', 'QuestionId is required').notEmpty()) {
-            requestBody('QuestionId', 'QuestionId is not valid').isInt();
-        }
         requestBody('UserId', 'UserId is required').notEmpty();
         if (requestBody('RelatedTags', 'Tag is required').notEmpty()) {
             requestBody('RelatedTags', 'Tag should be array').isArray();
@@ -144,7 +141,7 @@ exports.addUserQuestion = function(req, res) {
             res.send(errors);
         } else {
             var reqObj = {};
-            reqObj.questionId = req.body.QuestionId;
+            reqObj.questionId = Math.floor(Math.random() * 1000000000000) + new Date().getTime();
             reqObj.userId = req.body.UserId;
             reqObj.relatedTags = req.body.RelatedTags;
             reqObj.title = req.body.Title;
@@ -334,18 +331,34 @@ exports.updatePaswword = function(req,res)
     }
 }
 exports.getQuestions = function(req, res) {
-    modelObj.getQuestions(manipulatedReq, res, function(err, result) {
-        if(err)
+    modelObj.getQuestions(req, res, function(err, result) 
         {
-            res.status(200).json({"status":"Failure",message : err})
-        }
-        else
-        {
-            res.status(200).json({"status":"success",message : err})
-        }
+            if(err)
+            {
+                res.status(200).json({"status":"Failure",message : err})
+            }
+            else
+            {
+                res.status(200).json({"status":"success",message : result})
+            }
     });
 }
-
+exports.getQuqAnsById = function(req, res) {
+    var contentType = req.headers['content-type'] ? req.headers['content-type'] : "";
+    if(contentType && contentType.indexOf('application/json') != -1) {
+        modelObj.getQuqAnsById(req, res, function(err, result) 
+        {
+            if(err) 
+            {
+                res.status(200).json({"status":"Failure",message : err})
+            }
+            if(result)
+            {
+                res.status(200).json({"status":"success",children : result})
+            }
+        });
+    }
+}
 // custom functions
 function hashPwd(pwd , cbk)
 {

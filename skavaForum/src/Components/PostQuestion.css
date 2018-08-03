@@ -1,66 +1,11 @@
 /*post Question Page CSS - starts*/
-.cls_postQuestion{
-  position: absolute;
-  top: 150px;
-  left: 100px;  
-}
-.pageTitle{
-  color: black;
-  font-size: 25px;
-  margin-bottom: 30px;
-}
-.Quescontainer{
-  color: black;
-  font-size: 15px;
-  font-weight: bold;
-}
-.parentDiv{
-  padding-bottom: 20px;
-}
-.titleDiv{
-  margin-bottom: 15px;
-}
-.askTitle{
-  padding: 5px;
-  width: 90%;
-  margin-left: 20px;
-}
-.description{
-  margin-left: 20px;
-  resize: none;
-}
-.tagButton{
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  color: black;
-}
-.cls_tagButton{
-  margin-left: 20px;
-}
-.tagInput{
-  padding: 5px;
-  width: 80%;
-  margin-left: 20px;
-}
-.newTagButton{
-  margin-left: 10px;
-  background-color: darkgrey;
-  color: black;
-  border-radius: 5px;
-}
-.cls_postQuestion {
-  position: absolute;
-  top: 150px;
-  left: 100px;
-}
 .pageTitle {
   color: black;
   font-size: 25px;
   margin-bottom: 30px;
 }
-.Quescontainer {
-  color: black;
-  font-size: 15px;
+.cls_postQuestion .pageTitle
+{
   font-weight: bold;
 }
 .parentDiv {
@@ -68,16 +13,13 @@
 }
 .titleDiv {
   margin-bottom: 15px;
+  font-weight: bold;
 }
 .askTitle {
   padding: 5px 0px 5px 5px;
   width: calc(100% - 20px);
   margin-left: 20px;
   box-sizing: border-box;
-}
-.description {
-  margin-left: 20px;
-  resize: none;
 }
 .tagButton {
   margin-right: 10px;
@@ -94,7 +36,20 @@
 }
 .newTagButton {
   margin-left: 10px;
-  background-color: darkgrey;
-  color: black;
+  background-color: #003a70;
+  color: #fff;
   border-radius: 5px;
+  padding: 10px;
+}
+.description{
+  margin-left: 20px;
+  resize: none;
+  height: 200px;
+}
+.cls_postQuestion{
+  width: 688px;
+}
+#tagList
+{
+  margin: 20px;
 }

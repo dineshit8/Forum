@@ -219,7 +219,7 @@ exports.getRelatedQuest = function(req, res, cbk) {
             console.log(indexName);
         }
         });
-        dbo.collection("questions")
+        dbo.collection('questions')
         .find({$text: {$search: searchTerm}}, {score: {$meta: "textScore"}})
         .sort({score: {$meta: "textScore"}})
         .project({ score: { $meta: "textScore" } })
@@ -272,5 +272,64 @@ exports.updatePaswword = function(req,res,cbk)
                 cbk(false , "success");
             });  
         });
+    });
+}
+exports.getQuestions = function(req,res,cbk)
+{
+    MongoClient.connect(url , function(err , db)
+    {
+        if(err) throw err;
+        var dbo = db.db("forum");
+        dbo.collection('questions').find({}).toArray(function(err, results) 
+        {
+            if(err) throw err;
+            if(results)
+            {
+                cbk(false,results);
+            }
+            else
+            {
+                cbk("No questions found");
+            }
+           
+        });
+       
+    });
+}
+exports.getQuqAnsById = function(req,res,cbk)
+{
+    MongoClient.connect(url , function(err , db)
+    {
+        if(err) throw err;
+        var dbo = db.db("forum");
+        /*dbo.collection('questions').findOne({questionId: req.body.questionId}, function(err, results) 
+        {
+            if(err) throw err;
+            if(results)
+            {
+                cbk(false,results);
+            }
+            else
+            {
+                cbk("Question Doesn't Exist");
+            }
+        });*/
+        dbo.collection('questions').aggregate([
+            { $lookup:
+               {
+                 from: 'answers',
+                 localField: 'questionId',
+                 foreignField: 'questionId',
+                 as: 'answerDetails'
+               }
+             }
+            ]).toArray(function(err, res) {
+            if (err) throw err;
+            console.log(JSON.stringify(res));
+                cbk(false, res)
+            });
+  
+            
+        
     });
 }

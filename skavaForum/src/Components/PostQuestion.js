@@ -47,6 +47,7 @@ render() {
   if(this.state.userId)
   {
     return (
+      <div>
         <div className="cls_postQuestion">
           <div className="pageTitle">Post Your New Question</div>
           <div className="Quescontainer">
@@ -80,6 +81,7 @@ render() {
             </div>
           </div>
         </div>
+      </div>
       )
     }
     else

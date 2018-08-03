@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Link , Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -12,7 +11,7 @@ class Qa extends Component {
     }
     render() {
         return (
-            <div>
+            <div class="qpageTopContainer">
                 <div class="mainContainer">
                     <div className="pagecontainer">
                     <div className="Qamodel">
@@ -21,7 +20,7 @@ class Qa extends Component {
                                 <div className="qtitle"> Javascript </div>
                             </div>
                             <div className="qDescription">What is Javascript ? </div>
-                            <div className="rightcontent"><div className="tags"><div>Css</div> <div>Javascript</div></div></div>
+                            <div className="rightcontent"><div className="tags"><div className="tagsBackground">Css</div> <div className="tagsBackground">Javascript</div></div></div>
                         </div>
                         <div className="answercontainer">
                             <div className="innerContainer">
@@ -70,8 +69,8 @@ class Qa extends Component {
                             <div className="relatedContent">
                                 <div className="relatedTagTxt">Related Tags</div> 
                                 <div className="tagValues">  
-                                    <div className="relatedTag">Js</div>
-                                    <div className="relatedTag">Javascript</div>
+                                    <div className="tagsBackground tagAlign">Js</div>
+                                    <div className="tagsBackground tagAlign">Javascript</div>
                                 </div>
                             </div>
                         </div>

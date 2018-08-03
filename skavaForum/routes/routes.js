@@ -1,6 +1,5 @@
 var appRouter = function(app){
     var controllerObj = require("../controllers/controller.js");
-    app.route("/api/rest/welcome").get(controllerObj.getWelcomeMsg);
     app.route("/api/rest/createAccount").post(controllerObj.createAccount);
     app.route("/api/rest/login").post(controllerObj.signIn);
     app.route("/api/rest/logout").get(controllerObj.signout);
@@ -12,5 +11,6 @@ var appRouter = function(app){
 	app.route("/reset/:token").get(controllerObj.resetPassword);
     app.route("/reset/updatePassword").post(controllerObj.updatePaswword);
     app.route("/api/rest/getQuestions").get(controllerObj.getQuestions);
+    app.route("/api/rest/getQuqAnsById").post(controllerObj.getQuqAnsById);
 }
 module.exports = appRouter;

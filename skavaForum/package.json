@@ -40,7 +40,10 @@
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.1",
+    "react-richtext": "^1.1.0",
     "react-router-dom": "^4.3.1",
+    "react-rte": "^0.16.1",
+    "react-rte-image": "^0.11.1",
     "react-scripts": "^1.1.4"
   }
 }

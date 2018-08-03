@@ -26,8 +26,9 @@
     padding: 20px;
     margin-bottom: 10px;
 }
-.questionTitle{
-	width: 100%;
+.questionTag{
+  width: 100%;
+  display: inline-block;
 }
 .relatedTag{
 	box-sizing: border-box;
@@ -42,7 +43,7 @@
     text-decoration: underline;
     font-weight: 700;
 }
-.questionDesc{
+.questionTitle{
     font-size: 18px;
 }
 .tagsName{
@@ -55,6 +56,11 @@
     width: 25%;
     padding-left: 10px;
 }
-.relatedTag.tagAlign {
+.tagsBackground.tagAlign {
     margin: 10px;
+}
+
+.questionTitle , .questionDesc
+{
+    text-transform: capitalize;
 }
