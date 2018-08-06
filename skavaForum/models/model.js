@@ -302,19 +302,9 @@ exports.getQuqAnsById = function(req,res,cbk)
     {
         if(err) throw err;
         var dbo = db.db("forum");
-        /*dbo.collection('questions').findOne({questionId: req.body.questionId}, function(err, results) 
-        {
-            if(err) throw err;
-            if(results)
-            {
-                cbk(false,results);
-            }
-            else
-            {
-                cbk("Question Doesn't Exist");
-            }
-        });*/
+       var questId = parseFloat(req.body.questionId);
         dbo.collection('questions').aggregate([
+            {$match : {"questionId" : questId}},
             { $lookup:
                {
                  from: 'answers',
@@ -325,11 +315,8 @@ exports.getQuqAnsById = function(req,res,cbk)
              }
             ]).toArray(function(err, res) {
             if (err) throw err;
-            console.log(JSON.stringify(res));
+                console.log(JSON.stringify(res));
                 cbk(false, res)
             });
-  
-            
-        
     });
 }

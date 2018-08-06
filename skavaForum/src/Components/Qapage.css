@@ -2,6 +2,7 @@
 {
     max-width: 75%;
     float: left;
+    width: 100%;
     height: 100%;
     border-right: 2px solid #003a70;
 }
@@ -35,6 +36,7 @@
 .qpageTopContainer
 {
     height: 100%;
+    width: 100%;
     display: inline-block;
 }   
 .noOfAnswers
@@ -66,6 +68,7 @@
     padding-bottom: 20px;
     display: inline-block;
     border-bottom: 3px solid #e4e6e8;
+    width: 100%;
 }
 .postedInfo
 {

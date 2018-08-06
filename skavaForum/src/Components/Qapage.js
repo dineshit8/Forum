@@ -10,44 +10,55 @@ class Qa extends Component {
         super(props);
     }
     render() {
+        if(this.props.QaData && this.props.QaData.children && this.props.QaData.children[0])
+        {
         return (
-            <div class="qpageTopContainer">
-                <div class="mainContainer">
+            <div className="qpageTopContainer">
+                <div className="mainContainer">
                     <div className="pagecontainer">
                     <div className="Qamodel">
                         <div className="qaContainer">
-                            <div className="qtitlecontainer">
-                                <div className="qtitle"> Javascript </div>
-                            </div>
-                            <div className="qDescription">What is Javascript ? </div>
-                            <div className="rightcontent"><div className="tags"><div className="tagsBackground">Css</div> <div className="tagsBackground">Javascript</div></div></div>
-                        </div>
-                        <div className="answercontainer">
-                            <div className="innerContainer">
-                                <div className="noOfAnswers"><span>1 </span> Answers</div>
-                                    <div className="answerDesc"> 
-                                        <div className="answer"><p> Javascript is a dynamic computer programming language. It is lightweight and most commonly used as a part of web pages, whose implementations allow client-side script to interact with the user and make dynamic pages. It is an interpreted programming language with object-oriented capabilities.</p> </div> 
-                                    <div class="postedInfo">
-                                        <div className="Answered"><span>Answered</span><span className="postedDate">Nov 8 2017</span></div>
-                                                <div className="postedName"><span>by </span> Andris</div>
-                                        </div>
-                                    </div>
-                                    <div className="answerDesc"> 
-                                        <div className="answer"><p> Javascript is a dynamic computer programming language. It is lightweight and most commonly used as a part of web pages, whose implementations allow client-side script to interact with the user and make dynamic pages. It is an interpreted programming language with object-oriented capabilities.</p> </div> 
-                                    <div class="postedInfo">
-                                        <div className="Answered"><span>Answered</span><span className="postedDate">Nov 8 2017</span></div>
-                                                <div className="postedName"><span>by </span> Andris</div>
-                                        </div>
-                                    </div>
-                                    <div className="answerDesc"> 
-                                        <div className="answer"><p> Javascript is a dynamic computer programming language. It is lightweight and most commonly used as a part of web pages, whose implementations allow client-side script to interact with the user and make dynamic pages. It is an interpreted programming language with object-oriented capabilities.</p> </div> 
-                                    <div class="postedInfo">
-                                        <div className="Answered"><span>Answered</span><span className="postedDate">Nov 8 2017</span></div>
-                                                <div className="postedName"><span>by </span> Andris</div>
-                                        </div>
-                                    </div>
+                            {this.props.QaData.children[0].title ?
+                                <div className="qtitlecontainer">
+                                    <div className="qtitle"> {this.props.QaData.children[0].title} </div>
                                 </div>
+                                : "" } 
+                            {this.props.QaData.children[0].description ?
+                                <div className="qDescription"> {this.props.QaData.children[0].description} </div>
+                                :""}
+                            <div className="rightcontent"><div className="tags">
+                            {this.props.QaData.children[0].relatedTags ?
+                                this.props.QaData.children[0].relatedTags.map(function(tags,i)
+                                    {
+                                        return  <div className="tagsBackground">{tags}</div>
+                                    })
+                                
+                                : ""
+                            }
+                            </div>
                         </div>
+                        </div>
+                        {this.props.QaData.children[0].answerDetails ? 
+                            <div className="answercontainer">
+                                <div className="innerContainer">
+                                    <div className="noOfAnswers"><span> {this.props.QaData.children[0].answerDetails.length} </span> Answers</div>
+                                        { this.props.QaData.children[0].answerDetails.map(function(answers , key)
+                                        {   
+                                            return <div className="answerDesc"> 
+                                                { answers.answerDescription && answers.answerDescription[0] && answers.answerDescription[0].description ?
+                                                    <div className="answer"> <p> {answers.answerDescription[0].description}</p> </div> 
+                                                     :""
+                                                }
+                                            <div className="postedInfo">
+                                                <div className="Answered"><span>Answered</span><span className="postedDate">Nov 8 2017</span></div>
+                                                        <div className="postedName"><span>by </span> Andris</div>
+                                                </div>
+                                            </div>
+                                        })
+                                    }
+                                    </div>
+                            </div>
+                        : "" }
                      </div>
                      <div className="postAnswer">
                         <div className="answerCont">
@@ -78,6 +89,11 @@ class Qa extends Component {
                 </div>
             </div>
         );
+    }
+    else
+    {
+        return "Please Wait"
+    }
 }
 }
 export default Qa;

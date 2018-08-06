@@ -58,7 +58,7 @@ class Header extends Component {
           </div>
         </div>
         <div id = "signContainer" style={this.state.signinshowHide}></div>
-          <div className="content" id="searchResults">
+          <div className="content" id="resultsCont">
             <Route exact path="/" component={Home}/>
             <Route path="/Profile" component={Profile}/>
             <Route path="/PostQuestion" component={PostQuestion}/>
@@ -106,7 +106,7 @@ class Header extends Component {
         console.log(response);  
         self.setState({data : response && response.data ? response.data : ""});
         //<Search searchData = {self.state.data}/>;
-        ReactDOM.render(<Search searchData = {self.state.data}/>,document.getElementById('searchResults'));
+        ReactDOM.render(<Search searchData = {self.state.data}/>,document.getElementById('resultsCont'));
       })
       .catch(function (response) {
          console.log(response);
