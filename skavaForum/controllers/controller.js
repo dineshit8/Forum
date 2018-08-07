@@ -168,12 +168,7 @@ exports.addUserAnswer = function(req, res) {
         if (requestBody('QuestionId', 'QuestionId is required').notEmpty()) {
             requestBody('QuestionId', 'QuestionId is not valid').isInt();
         }
-        if (requestBody('AnswerId', 'AnswerId is required').notEmpty()) {
-            requestBody('AnswerId', 'AnswerId is not valid').isInt();
-        }
-        if (requestBody('UserId', 'UserId is required').notEmpty()) {
-            requestBody('UserId', 'UserId is not valid').isInt();
-        }
+        requestBody('UserId', 'UserId is required').notEmpty();
         requestBody('Description', 'Description is required').notEmpty();
         var errors = req.validationErrors();
         if (errors) {
@@ -181,14 +176,14 @@ exports.addUserAnswer = function(req, res) {
         } else {
             var reqObj = {};
             reqObj.questionId = req.body.QuestionId;
-            reqObj.answerId = req.body.AnswerId;
+            reqObj.answerId = Math.floor(Math.random() * 1000000000000) + new Date().getTime();
             reqObj.userId = req.body.UserId;
             reqObj.description = req.body.Description;
             modelObj.addAnswer(reqObj, res, function(err, result) {
                 if (err) {
                     res.status(200).json({ message: 'Failure' });
                 } else {
-                    res.status(200).json({ message: "Answer updated sucessfully", status: 'Success' });
+                    res.status(200).json({ message: "Answer updated sucessfully", status: 'Success' , resultVal : result });
                 }
             });
         }

@@ -95,14 +95,15 @@ exports.addQuestion = function(reqObj, res, cbk) {
 exports.addAnswer = function(reqObj, res, cbk) 
 {
     var ansDescriptionObj = {};
-    ansDescriptionObj.answerId = reqObj.answerId;
+    ansDescriptionObj.answerId = parseFloat(reqObj.answerId);
+    ansDescriptionObj.questionId = parseFloat(reqObj.questionId);
     ansDescriptionObj.userId = reqObj.userId;
     ansDescriptionObj.description = reqObj.description;
     ansDescriptionObj.postedDate = new Date();
     MongoClient.connect(url, function (err, db) {
     if(err) throw err;
     dbo = db.db("forum");
-    dbo.collection('answers').find({ questionId: reqObj.questionId }, { projection: { _id: 0 } }).toArray(function(err, results) 
+    dbo.collection('answers').find({ questionId: ansDescriptionObj.questionId}, { projection: { _id: 0 } }).toArray(function(err, results) 
     {
         if (results.length) {
             dbo.collection('answers').find({
@@ -115,7 +116,7 @@ exports.addAnswer = function(reqObj, res, cbk)
                 }]
             }).toArray(function(err, results) {
                 console.log(results);
-                if (results.length) {
+                if (results && results.length) {
                     console.log("update array of object");
                     dbo.collection('answers').updateOne({
                         $and: [{ questionId: reqObj.questionId }, {
@@ -302,20 +303,20 @@ exports.getQuqAnsById = function(req,res,cbk)
     {
         if(err) throw err;
         var dbo = db.db("forum");
-       var questId = parseFloat(req.body.questionId);
+        var questId = parseFloat(req.body.questionId);
         dbo.collection('questions').aggregate([
             {$match : {"questionId" : questId}},
-            { $lookup:
-               {
-                 from: 'answers',
-                 localField: 'questionId',
-                 foreignField: 'questionId',
-                 as: 'answerDetails'
-               }
-             }
+            { 
+                $lookup:
+                {
+                    from: 'answers',
+                    localField: 'questionId',
+                    foreignField: 'questionId',
+                    as: 'answerDetails'
+                }
+             },
             ]).toArray(function(err, res) {
             if (err) throw err;
-                console.log(JSON.stringify(res));
                 cbk(false, res)
             });
     });

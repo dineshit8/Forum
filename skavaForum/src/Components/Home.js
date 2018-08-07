@@ -75,23 +75,7 @@ navigateQuestion()
 	var _self = this;
 	var element = _self.refs.questionTitle;
 	var QuestionId = element.getAttribute("qid");
-	axios({
-		method: 'post',
-		url: 'http://localhost:4000/api/rest/getQuqAnsById',
-		data: {"questionId":"2090333750740"},
-		config: { headers: {'Content-Type': 'application/json' }},
-		credentials: 'same-origin'
-		})
-		.then((response) => {
-			if(response && response.data && response.data.status && response.data.status == "success")
-			{
-				_self.setState({data : response && response.data ? response.data : ""});
-				ReactDOM.render(<Qa QaData = {_self.state.data}/>,document.getElementById('resultsCont'));
-			}
-		})
-		.catch(function (response) {
-			console.log(response);
-		});
+	window.location.href = "/Qa?id="+QuestionId;
 }
 }
 export default Home;

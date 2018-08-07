@@ -8,9 +8,34 @@ class Qa extends Component {
     constructor(props)
     {
         super(props);
+        this.addAnswer = this.addAnswer.bind(this);
+        this.state = {QaData : this.props.QaData}
     }
+    componentWillMount()
+    {
+        let params = (new URL(document.location)).searchParams;
+        let questionId = params.get("id");
+        var _self = this;
+        axios({
+            method: 'post',
+            url: 'http://localhost:4000/api/rest/getQuqAnsById',
+            data: {"questionId":questionId},
+            config: { headers: {'Content-Type': 'application/json' }},
+            credentials: 'same-origin'
+            })
+            .then((response) => {
+                if(response && response.data && response.data.status && response.data.status == "success")
+                {
+                    _self.setState({QaData : response.data  , answerData : response.data.children && response.data.children[0] && response.data.children[0].answerDetails ? response.data.children[0].answerDetails : ""});
+                }
+            })
+            .catch(function (response) {
+                console.log(response);
+            });
+    }
+
     render() {
-        if(this.props.QaData && this.props.QaData.children && this.props.QaData.children[0])
+        if(this.state.QaData && this.state.QaData.children && this.state.QaData.children[0])
         {
         return (
             <div className="qpageTopContainer">
@@ -18,17 +43,17 @@ class Qa extends Component {
                     <div className="pagecontainer">
                     <div className="Qamodel">
                         <div className="qaContainer">
-                            {this.props.QaData.children[0].title ?
+                            {this.state.QaData.children[0].title ?
                                 <div className="qtitlecontainer">
-                                    <div className="qtitle"> {this.props.QaData.children[0].title} </div>
+                                    <div className="qtitle"> {this.state.QaData.children[0].title} </div>
                                 </div>
                                 : "" } 
-                            {this.props.QaData.children[0].description ?
-                                <div className="qDescription"> {this.props.QaData.children[0].description} </div>
+                            {this.state.QaData.children[0].description ?
+                                <div className="qDescription"> {this.state.QaData.children[0].description} </div>
                                 :""}
                             <div className="rightcontent"><div className="tags">
-                            {this.props.QaData.children[0].relatedTags ?
-                                this.props.QaData.children[0].relatedTags.map(function(tags,i)
+                            {this.state.QaData.children[0].relatedTags ?
+                                this.state.QaData.children[0].relatedTags.map(function(tags,i)
                                     {
                                         return  <div className="tagsBackground">{tags}</div>
                                     })
@@ -38,11 +63,11 @@ class Qa extends Component {
                             </div>
                         </div>
                         </div>
-                        {this.props.QaData.children[0].answerDetails ? 
+                        {this.state.answerData ? 
                             <div className="answercontainer">
                                 <div className="innerContainer">
-                                    <div className="noOfAnswers"><span> {this.props.QaData.children[0].answerDetails.length} </span> Answers</div>
-                                        { this.props.QaData.children[0].answerDetails.map(function(answers , key)
+                                    <div className="noOfAnswers"><span> {this.state.answerData.length} </span> Answers</div>
+                                        { this.state.answerData.map(function(answers , key)
                                         {   
                                             return <div className="answerDesc"> 
                                                 { answers.answerDescription && answers.answerDescription[0] && answers.answerDescription[0].description ?
@@ -64,12 +89,11 @@ class Qa extends Component {
                         <div className="answerCont">
                             <div className="yourAns">Your Answer</div>
                             <div className="postAns">
-                                 <textarea className="description" cols="100" rows="15" onChange={this.handlequesDescription}></textarea>
+                                 <textarea className="description" cols="100" ref = "answerValue" rows="15" onChange={this.handlequesDescription}></textarea>
                             </div>
                         </div>
-                        <button type="submit" id="post_submitbtn">Post Answer</button>
+                        <button type="submit" id="post_submitbtn" ref= "postAnswer" uid = {this.state.QaData.children[0].userId} qid = {this.state.QaData.children[0].questionId} onClick={this.addAnswer}>Post Answer</button>
                      </div>
-
                     </div>
                     <div className="tagcontainer">
                         <div className="postedInformation">
@@ -94,6 +118,37 @@ class Qa extends Component {
     {
         return "Please Wait"
     }
+}
+addAnswer(event)
+{
+    event.preventDefault(); 
+    var postAnswerdom = this.refs.postAnswer;
+    var answerdom = this.refs.answerValue;
+    var QuestionId = postAnswerdom.getAttribute('qid');
+    var userId = postAnswerdom.getAttribute('uid');
+    var description = answerdom.value;
+        axios({
+            method: 'post',
+            url: 'http://localhost:4000/api/rest/addUserAnswer',
+            data: {"QuestionId":QuestionId,"UserId":userId,"Description":description},
+            config: { headers: {'Content-Type': 'application/json' }},
+            credentials: 'same-origin'
+      })
+      .then((response) => {
+            var responseData = response && response.data ? response.data : "";
+            if(responseData && responseData[0] && responseData[0].msg)
+            {
+                //_self.setState();
+            }
+            else if(responseData && responseData.message)
+            {
+                
+            }
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+
 }
 }
 export default Qa;
