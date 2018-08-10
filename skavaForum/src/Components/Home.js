@@ -9,6 +9,7 @@ constructor(props)
 {
 	super(props);
 	this.state = {data:""};
+	this.myref = React.createRef();
 	this.navigateQuestion = this.navigateQuestion.bind(this);
 }
 componentWillMount() {
@@ -39,8 +40,8 @@ render(){
 		                {
 		                    this.state.data.map(function(questions,i){
 			                    return <div className={"parentListDiv list_0" + i} uid={questions.userId}>
-			                      <div className="questionTitle" qid={questions.questionId} ref = "questionTitle" onClick={self.navigateQuestion} >{questions.title}</div> <br/>
-			                      <div className="questionDesc" qid={questions.questionId} ref = "questionDesc" >{questions.description} </div> <br/>
+			                      <div className="questionTitle" qid={questions.questionId} ref = {self.myref} onClick={self.navigateQuestion.bind(this) } >{questions.title}</div> <br/>
+			                      <div className="questionDesc" qid={questions.questionId} ref = {self.myref} >{questions.description} </div> <br/>
 								  <div className="questionTag">
 									{
 										questions.relatedTags.map(function(tags,j)
@@ -67,14 +68,12 @@ render(){
             		</div>
             	</div>
            </div>
-		   : "No Questions Found "
+		   : "Please Wait... "
 		)
 	}
-navigateQuestion()
+navigateQuestion(self)
 {
-	var _self = this;
-	var element = _self.refs.questionTitle;
-	var QuestionId = element.getAttribute("qid");
+	var QuestionId = self ? self.target.getAttribute("qid") : "";
 	window.location.href = "/Qa?id="+QuestionId;
 }
 }

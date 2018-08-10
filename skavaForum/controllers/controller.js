@@ -175,7 +175,7 @@ exports.addUserAnswer = function(req, res) {
             res.send(errors);
         } else {
             var reqObj = {};
-            reqObj.questionId = req.body.QuestionId;
+            reqObj.questionId = parseFloat(req.body.QuestionId);
             reqObj.answerId = Math.floor(Math.random() * 1000000000000) + new Date().getTime();
             reqObj.userId = req.body.UserId;
             reqObj.description = req.body.Description;
@@ -183,7 +183,7 @@ exports.addUserAnswer = function(req, res) {
                 if (err) {
                     res.status(200).json({ message: 'Failure' });
                 } else {
-                    res.status(200).json({ message: "Answer updated sucessfully", status: 'Success' , resultVal : result });
+                    res.status(200).json({ message: "Answer updated sucessfully", status: 'Success' });
                 }
             });
         }

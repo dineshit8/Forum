@@ -106,6 +106,9 @@ exports.addAnswer = function(reqObj, res, cbk)
     dbo.collection('answers').find({ questionId: ansDescriptionObj.questionId}, { projection: { _id: 0 } }).toArray(function(err, results) 
     {
         if (results.length) {
+            MongoClient.connect(url, function (err, db) {
+            if(err) throw err;
+            dbo = db.db("forum");
             dbo.collection('answers').find({
                 $and: [{ questionId: reqObj.questionId }, {
                     answerDescription: {
@@ -118,6 +121,9 @@ exports.addAnswer = function(reqObj, res, cbk)
                 console.log(results);
                 if (results && results.length) {
                     console.log("update array of object");
+                    MongoClient.connect(url, function (err, db) {
+                    if(err) throw err;
+                    dbo = db.db("forum");
                     dbo.collection('answers').updateOne({
                         $and: [{ questionId: reqObj.questionId }, {
                             answerDescription: {
@@ -129,12 +135,18 @@ exports.addAnswer = function(reqObj, res, cbk)
                     }, { $set: { 'answerDescription.$': ansDescriptionObj } }, function(err, result) {
                         cbk(null, result);
                     })
+                });
                 } else {
-                    console.log("push")
-                    dbo.collection('answers').update({ questionId: reqObj.questionId }, { $push: { "answerDescription": ansDescriptionObj } }, function(err, result) {
-                        cbk(null, result);
+                    console.log("push");
+                    MongoClient.connect(url, function (err, db) {
+                    if(err) throw err;
+                    dbo = db.db("forum");
+                        dbo.collection('answers').update({ questionId: reqObj.questionId }, { $push: { "answerDescription": ansDescriptionObj } }, function(err, result) {
+                            cbk(null, result);
+                        });
                     });
                 }
+            });
             });
             } 
             else 

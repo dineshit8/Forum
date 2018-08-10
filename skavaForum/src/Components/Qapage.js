@@ -9,7 +9,7 @@ class Qa extends Component {
     {
         super(props);
         this.addAnswer = this.addAnswer.bind(this);
-        this.state = {QaData : this.props.QaData}
+        this.state = {QaData : ""}
     }
     componentWillMount()
     {
@@ -26,7 +26,7 @@ class Qa extends Component {
             .then((response) => {
                 if(response && response.data && response.data.status && response.data.status == "success")
                 {
-                    _self.setState({QaData : response.data  , answerData : response.data.children && response.data.children[0] && response.data.children[0].answerDetails ? response.data.children[0].answerDetails : ""});
+                    _self.setState({QaData : response.data });
                 }
             })
             .catch(function (response) {
@@ -63,15 +63,15 @@ class Qa extends Component {
                             </div>
                         </div>
                         </div>
-                        {this.state.answerData ? 
+                        {this.state.QaData.children[0].answerDetails && this.state.QaData.children[0].answerDetails[0] && this.state.QaData.children[0].answerDetails[0].answerDescription ? 
                             <div className="answercontainer">
                                 <div className="innerContainer">
-                                    <div className="noOfAnswers"><span> {this.state.answerData.length} </span> Answers</div>
-                                        { this.state.answerData.map(function(answers , key)
+                                    <div className="noOfAnswers"><span> {this.state.QaData.children[0].answerDetails[0].answerDescription.length} </span> Answers</div>
+                                        { this.state.QaData.children[0].answerDetails[0].answerDescription.map(function(answers , key)
                                         {   
                                             return <div className="answerDesc"> 
-                                                { answers.answerDescription && answers.answerDescription[0] && answers.answerDescription[0].description ?
-                                                    <div className="answer"> <p> {answers.answerDescription[0].description}</p> </div> 
+                                                { answers.description ?
+                                                    <div className="answer"> <p> {answers.description}</p> </div> 
                                                      :""
                                                 }
                                             <div className="postedInfo">
@@ -116,7 +116,7 @@ class Qa extends Component {
     }
     else
     {
-        return "Please Wait"
+        return "Please Wait..."
     }
 }
 addAnswer(event)
@@ -127,6 +127,7 @@ addAnswer(event)
     var QuestionId = postAnswerdom.getAttribute('qid');
     var userId = postAnswerdom.getAttribute('uid');
     var description = answerdom.value;
+    var _self = this;
         axios({
             method: 'post',
             url: 'http://localhost:4000/api/rest/addUserAnswer',
@@ -138,11 +139,11 @@ addAnswer(event)
             var responseData = response && response.data ? response.data : "";
             if(responseData && responseData[0] && responseData[0].msg)
             {
-                //_self.setState();
+               console.log(responseData[0].msg);
             }
-            else if(responseData && responseData.message)
+            else if(responseData && responseData.message && responseData.status && responseData.status == "Success")
             {
-                
+                _self.componentWillMount();
             }
       })
       .catch(function (response) {
