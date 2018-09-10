@@ -16,7 +16,7 @@ componentWillMount() {
 	var self = this;
 	axios({
 		method: 'get',
-		url: 'http://localhost:4000/api/rest/getQuestions',
+		url: '/api/rest/getQuestions',
 		config: { headers: {'Content-Type': 'application/json' }},
 		credentials: 'same-origin'
 		})
@@ -28,7 +28,7 @@ componentWillMount() {
 	});
 	axios({
 		method: 'get',
-		url: 'http://localhost:4000/api/rest/getTagsByUserId',
+		url: '/api/rest/getTagsByUserId',
 		config: { headers: {'Content-Type': 'application/json' }},
 		credentials: 'same-origin'
 		})
