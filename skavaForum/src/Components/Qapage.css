@@ -75,6 +75,8 @@
     float:right;
     margin-right: 25px;
     font-size: 13px;
+    margin-top: 13px;
+    font-style: italic;
 }
 .postedDate
 {

@@ -98,6 +98,10 @@ exports.signIn = function(req , res)
                     {
                         if(response)
                         {
+                            var session = req.session;
+                            session.userId = result.userId;
+                            session.userName = result.userName;
+                            req.session.save();
                             //res.cookie('s_Ts_cookie', 1, {maxAge: 300000, Path : "/"});
                             res.cookie('userId',result.userId,{maxAge:300000,Path:"/"});
                             res.status(200).json({"user_name" : result.userName ,"userId": result.userId , message : "You have been logged into your account successfully.", "status":"Success"});
@@ -120,6 +124,11 @@ exports.signIn = function(req , res)
 exports.signout = function(req , res) 
 {
     //res.cookie('s_Ts_cookie','', {httpOnly: true });
+    req.session.destroy(function(err) {
+        if(err) {
+          console.log(err);
+        }
+      });
     res.cookie('userId', 0,{ Path:'/'});
     //res.cookie('s_Ts_cookie').destroy();
     res.status(200).send({message:"Logout Success","status":"success"});
@@ -147,6 +156,7 @@ exports.addUserQuestion = function(req, res) {
             reqObj.title = req.body.Title;
             reqObj.description = req.body.Description;
             reqObj.postedDate = new Date();
+            reqObj.postedUserName = req.session.userName;
             modelObj.addQuestion(reqObj, res, function(err, result) {
                 if (err) {
                     res.status(200).json({ message: 'Failure' });
@@ -158,6 +168,7 @@ exports.addUserQuestion = function(req, res) {
     } else {
         res.status(400).json({ message: 'Bad Request', status: 'Failure' });
     }
+    sessionReload(req);
 }
 
 exports.addUserAnswer = function(req, res) {
@@ -168,7 +179,7 @@ exports.addUserAnswer = function(req, res) {
         if (requestBody('QuestionId', 'QuestionId is required').notEmpty()) {
             requestBody('QuestionId', 'QuestionId is not valid').isInt();
         }
-        requestBody('UserId', 'UserId is required').notEmpty();
+        //requestBody('UserId', 'UserId is required').notEmpty();
         requestBody('Description', 'Description is required').notEmpty();
         var errors = req.validationErrors();
         if (errors) {
@@ -177,8 +188,9 @@ exports.addUserAnswer = function(req, res) {
             var reqObj = {};
             reqObj.questionId = parseFloat(req.body.QuestionId);
             reqObj.answerId = Math.floor(Math.random() * 1000000000000) + new Date().getTime();
-            reqObj.userId = req.body.UserId;
+            reqObj.userId = req.session.userId;
             reqObj.description = req.body.Description;
+            reqObj.userName = req.session.userName;
             modelObj.addAnswer(reqObj, res, function(err, result) {
                 if (err) {
                     res.status(200).json({ message: 'Failure' });
@@ -190,6 +202,7 @@ exports.addUserAnswer = function(req, res) {
     } else {
         res.status(400).json({ message: 'Bad Request', status: 'Failure' });
     }
+    sessionReload(req);
 }
 
 exports.getAnswer = function(req, res) {
@@ -214,6 +227,7 @@ exports.getAnswer = function(req, res) {
     } else {
         res.status(400).json({ message: 'Bad Request', status: 'Failure' });
     }
+    sessionReload(req);
 }
 exports.forgotPwd = function(req,res)
 {
@@ -349,10 +363,28 @@ exports.getQuqAnsById = function(req, res) {
             }
             if(result)
             {
-                res.status(200).json({"status":"success",children : result})
+               res.status(200).json({"status":"success",children : result})
             }
         });
     }
+    sessionReload(req);
+}
+exports.getTagsByUserId = function(req, res) {
+    if(req)
+    {
+        modelObj.getTagsByUserId(req, res, function(err, result) 
+        {
+            if(err) 
+            {
+                res.status(200).json({"status":"Failure",message : err})
+            }
+            if(result)
+            {
+                res.status(200).json({"status":"success",children : result})
+            }
+        });
+        sessionReload(req);
+    }   
 }
 // custom functions
 function hashPwd(pwd , cbk)
@@ -374,4 +406,11 @@ function generateToken(cbk)
         cbk(token)
     }); 
    
+}
+function sessionReload(req)
+{
+    req.session.reload(function(err) {
+        console.log("session Err" + err);
+        // session updated
+      });
 }

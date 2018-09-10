@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom';
 import "./Home.css";
 import axios from 'axios';
 import Qa from './Qapage';
+import Cookies from 'js-cookie';
 export class Home extends Component {
 constructor(props)
 {
 	super(props);
-	this.state = {data:""};
-	this.myref = React.createRef();
+	this.state = {data:"",tagData:"",userId : Cookies.get('userId')};
 	this.navigateQuestion = this.navigateQuestion.bind(this);
 }
 componentWillMount() {
@@ -26,13 +26,24 @@ componentWillMount() {
 		.catch(function (response) {
 			console.log(response);
 	});
+	axios({
+		method: 'get',
+		url: 'http://localhost:4000/api/rest/getTagsByUserId',
+		config: { headers: {'Content-Type': 'application/json' }},
+		credentials: 'same-origin'
+		})
+		.then((response) => {
+			self.setState({tagData : response && response.data.children && response.data.children[0] && response.data.children[0].tags ? response.data.children[0].tags : ""});
+		})
+		.catch(function (response) {
+			console.log(response);
+	});
 }
 render(){
 	var self = this;
 	return(
 		 this.state.data.length ?
-		 	
-            <div className="homePage">
+		 	<div className="homePage">
             	<div className="questContainer">
 	                <div className="questTitle">Questions</div>
 	                <div className="LoginAskQuestion"></div>
@@ -40,8 +51,8 @@ render(){
 		                {
 		                    this.state.data.map(function(questions,i){
 			                    return <div className={"parentListDiv list_0" + i} uid={questions.userId}>
-			                      <div className="questionTitle" qid={questions.questionId} ref = {self.myref} onClick={self.navigateQuestion.bind(this) } >{questions.title}</div> <br/>
-			                      <div className="questionDesc" qid={questions.questionId} ref = {self.myref} >{questions.description} </div> <br/>
+			                      <div className="questionTitle" qid={questions.questionId} onClick={self.navigateQuestion.bind(this) } >{questions.title}</div> <br/>
+			                      <div className="questionDesc" qid={questions.questionId} >{questions.description} </div> <br/>
 								  <div className="questionTag">
 									{
 										questions.relatedTags.map(function(tags,j)
@@ -55,18 +66,19 @@ render(){
 		                }   
             		</div>
             	</div>
+				{ this.state.userId && this.state.tagData? 
             	<div className="popularTags">
             		<div className="popularTagTitle">Popular Tags</div>
             		<div className="tagsName">
             		{
-            			this.state.data.map(function(tagid,i){
+            			this.state.tagData.map(function(tagid,i){
 			                    return <div className={"tag_0" + i}>
-			                      		<div className="tagsBackground tagAlign">{tagid.title}</div>
+			                      		<div className="tagsBackground tagAlign">{tagid}</div>
 			                    </div>;
 			                })
             		}	
             		</div>
-            	</div>
+				</div> : "" }
            </div>
 		   : "Please Wait... "
 		)

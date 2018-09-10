@@ -12,5 +12,6 @@ var appRouter = function(app){
     app.route("/reset/updatePassword").post(controllerObj.updatePaswword);
     app.route("/api/rest/getQuestions").get(controllerObj.getQuestions);
     app.route("/api/rest/getQuqAnsById").post(controllerObj.getQuqAnsById);
+    app.route("/api/rest/getTagsByUserId").get(controllerObj.getTagsByUserId);
 }
 module.exports = appRouter;

@@ -100,6 +100,7 @@ exports.addAnswer = function(reqObj, res, cbk)
     ansDescriptionObj.userId = reqObj.userId;
     ansDescriptionObj.description = reqObj.description;
     ansDescriptionObj.postedDate = new Date();
+    ansDescriptionObj.userName = reqObj.userName;
     MongoClient.connect(url, function (err, db) {
     if(err) throw err;
     dbo = db.db("forum");
@@ -304,9 +305,7 @@ exports.getQuestions = function(req,res,cbk)
             {
                 cbk("No questions found");
             }
-           
         });
-       
     });
 }
 exports.getQuqAnsById = function(req,res,cbk)
@@ -328,8 +327,26 @@ exports.getQuqAnsById = function(req,res,cbk)
                 }
              },
             ]).toArray(function(err, res) {
-            if (err) throw err;
-                cbk(false, res)
+                if (err) throw err;
+                cbk(false,res);
             });
+    });
+}
+
+exports.getTagsByUserId = function(req,res,cbk)
+{
+    MongoClient.connect(url , function(err , db)
+    {
+        if(err) throw err;
+        var dbo = db.db("forum");
+        const cursor = dbo.collection('userinfo').find({userId : req.session.userId}).project({"tags" : 1 , _id : 0}).toArray(function(err,tags){  
+            if (tags.length) {  
+                cbk(false,tags);
+            }
+            else
+            {
+                cbk("Please Login...");
+            }
+        });
     });
 }

@@ -9,7 +9,7 @@ class Qa extends Component {
     {
         super(props);
         this.addAnswer = this.addAnswer.bind(this);
-        this.state = {QaData : ""}
+        this.state = {QaData : "",tagData:"",userId : Cookies.get('userId')}
     }
     componentWillMount()
     {
@@ -32,92 +32,122 @@ class Qa extends Component {
             .catch(function (response) {
                 console.log(response);
             });
+            axios({
+                method: 'get',
+                url: 'http://localhost:4000/api/rest/getTagsByUserId',
+                config: { headers: {'Content-Type': 'application/json' }},
+                credentials: 'same-origin'
+                })
+                .then((response) => {
+                    _self.setState({tagData : response && response.data.children && response.data.children && response.data.children.tags ? response.data.children.tags : ""});
+                })
+                .catch(function (response) {
+                    console.log(response);
+            });
     }
 
     render() {
-        if(this.state.QaData && this.state.QaData.children && this.state.QaData.children[0])
+        if( this.state.userId)
         {
-        return (
-            <div className="qpageTopContainer">
-                <div className="mainContainer">
-                    <div className="pagecontainer">
-                    <div className="Qamodel">
-                        <div className="qaContainer">
-                            {this.state.QaData.children[0].title ?
-                                <div className="qtitlecontainer">
-                                    <div className="qtitle"> {this.state.QaData.children[0].title} </div>
-                                </div>
-                                : "" } 
-                            {this.state.QaData.children[0].description ?
-                                <div className="qDescription"> {this.state.QaData.children[0].description} </div>
-                                :""}
-                            <div className="rightcontent"><div className="tags">
-                            {this.state.QaData.children[0].relatedTags ?
-                                this.state.QaData.children[0].relatedTags.map(function(tags,i)
-                                    {
-                                        return  <div className="tagsBackground">{tags}</div>
-                                    })
-                                
-                                : ""
-                            }
-                            </div>
-                        </div>
-                        </div>
-                        {this.state.QaData.children[0].answerDetails && this.state.QaData.children[0].answerDetails[0] && this.state.QaData.children[0].answerDetails[0].answerDescription ? 
-                            <div className="answercontainer">
-                                <div className="innerContainer">
-                                    <div className="noOfAnswers"><span> {this.state.QaData.children[0].answerDetails[0].answerDescription.length} </span> Answers</div>
-                                        { this.state.QaData.children[0].answerDetails[0].answerDescription.map(function(answers , key)
-                                        {   
-                                            return <div className="answerDesc"> 
-                                                { answers.description ?
-                                                    <div className="answer"> <p> {answers.description}</p> </div> 
-                                                     :""
-                                                }
-                                            <div className="postedInfo">
-                                                <div className="Answered"><span>Answered</span><span className="postedDate">Nov 8 2017</span></div>
-                                                        <div className="postedName"><span>by </span> Andris</div>
-                                                </div>
-                                            </div>
-                                        })
-                                    }
+           if(this.state.QaData && this.state.QaData.children)
+            {
+                const noOfAnswersLen = this.state.QaData.children[0] && this.state.QaData.children[0].answerDetails && this.state.QaData.children[0].answerDetails[0] && this.state.QaData.children[0].answerDetails[0].answerDescription && this.state.QaData.children[0].answerDetails[0].answerDescription.length ? this.state.QaData.children[0].answerDetails[0].answerDescription.length : "";
+            return (
+                <div className="qpageTopContainer">
+                    <div className="mainContainer">
+                        <div className="pagecontainer">
+                        <div className="Qamodel">
+                            <div className="qaContainer">
+                                {this.state.QaData.children.title ?
+                                    <div className="qtitlecontainer">
+                                        <div className="qtitle"> {this.state.QaData.children.title} </div>
                                     </div>
-                            </div>
-                        : "" }
-                     </div>
-                     <div className="postAnswer">
-                        <div className="answerCont">
-                            <div className="yourAns">Your Answer</div>
-                            <div className="postAns">
-                                 <textarea className="description" cols="100" ref = "answerValue" rows="15" onChange={this.handlequesDescription}></textarea>
-                            </div>
-                        </div>
-                        <button type="submit" id="post_submitbtn" ref= "postAnswer" uid = {this.state.QaData.children[0].userId} qid = {this.state.QaData.children[0].questionId} onClick={this.addAnswer}>Post Answer</button>
-                     </div>
-                    </div>
-                    <div className="tagcontainer">
-                        <div className="postedInformation">
-                            <div className="postedByValues"><span className="postedby">Posted By : </span><span>Kumar</span></div>
-                            <div className="postedDateValues"><span className="posteDate">Posted Date : </span><span>Oct 8 2017</span></div>
-                        </div>
-                        <div className="relatedtagCont">
-                            <div className="relatedContent">
-                                <div className="relatedTagTxt">Related Tags</div> 
-                                <div className="tagValues">  
-                                    <div className="tagsBackground tagAlign">Js</div>
-                                    <div className="tagsBackground tagAlign">Javascript</div>
+                                    : "" } 
+                                {this.state.QaData.children.description ?
+                                    <div className="qDescription"> {this.state.QaData.children.description} </div>
+                                    :""}
+                                <div className="rightcontent"><div className="tags">
+                                {this.state.QaData.children.relatedTags ?
+                                    this.state.QaData.children.relatedTags.map(function(tags,i)
+                                        {
+                                            return  <div className="tagsBackground">{tags}</div>
+                                        })
+                                    
+                                    : ""
+                                }
                                 </div>
                             </div>
+                            </div>
+                            {this.state.QaData.children[0].answerDetails && this.state.QaData.children[0].answerDetails[0] && this.state.QaData.children[0].answerDetails[0].answerDescription ? 
+                                <div className="answercontainer">
+                                    <div className="innerContainer">
+                                       
+                                        <div className="noOfAnswers"><span> {noOfAnswersLen > 1 ? noOfAnswersLen + " Answers" : noOfAnswersLen + " Answer" }</span> </div>
+                                            { this.state.QaData.children[0].answerDetails[0].answerDescription.map(function(answers , key)
+                                            {   
+                                                return <div className="answerDesc"> 
+                                                    { answers.description ?
+                                                        <div className="answer"> <p> {answers.description}</p> </div> 
+                                                        :""
+                                                    }
+                                                <div className="postedInfo">
+                                                    <div className="Answered"><span>Answered</span><span className="postedDate">{answers.postedDate}</span></div>
+                                                            <div className="postedName"><span>by </span> {answers.userName}</div>
+                                                    </div>
+                                                </div>
+                                            })
+                                        }
+                                        </div>
+                                </div>
+                            : "" }
+                        </div>
+                        <div className="postAnswer">
+                            <div className="answerCont">
+                                <div className="yourAns">Your Answer</div>
+                                <div className="postAns">
+                                    <textarea className="description" id="description" cols="100" ref = "answerValue" rows="15" onChange={this.handlequesDescription}></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" id="post_submitbtn" ref= "postAnswer" uid = {this.state.QaData.children[0].userId} qid = {this.state.QaData.children[0].questionId} onClick={this.addAnswer}>Post Answer</button>
+                        </div>
+                        </div>
+                        <div className="tagcontainer">
+                            <div className="postedInformation">
+                                <div className="postedByValues"><span className="postedby">Posted By : </span><span>{this.state.QaData.children[0].postedUserName ? this.state.QaData.children[0].postedUserName : ""}</span></div>
+                                <div className="postedDateValues"><span className="posteDate">Posted Date : </span><span>{this.state.QaData.children[0].postedDate ? this.state.QaData.children[0].postedDate : ""}</span></div>
+                            </div>
+                            { this.state.userId && this.state.tagData? 
+                            <div className="relatedtagCont">
+                                <div className="relatedTagTxt">Popular Tags</div>
+                                <div className="tagValues">
+                                {
+                                    this.state.tagData.map(function(tagid,i){
+                                            return <div className={"tag_0" + i}>
+                                                    <div className="tagsBackground tagAlign">{tagid}</div>
+                                            </div>;
+                                        })
+                                }	
+                                    </div>
+                            </div> : "" }
                         </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        }
+        else
+        {
+            return "Please Wait..."
+        }
     }
     else
     {
-        return "Please Wait..."
+        setTimeout(function()
+        { 
+            window.location.href = window.location.origin;
+        }, 3000);
+        return "Please Login First..!!  You will be Re-directing to the home page soon..."
     }
+
 }
 addAnswer(event)
 {
@@ -144,6 +174,7 @@ addAnswer(event)
             else if(responseData && responseData.message && responseData.status && responseData.status == "Success")
             {
                 _self.componentWillMount();
+                document.getElementById('description').value = ""
             }
       })
       .catch(function (response) {
