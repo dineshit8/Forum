@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 
-var url = "mongodb://localhost:27017";
+var url = "mongodb://dinesh:dineshit8@ds151382.mlab.com:51382/forum";
 var dbo;
 
 //create mongoDB and collection 
