@@ -97,7 +97,7 @@ class Header extends Component {
     var self = this;
     axios({
         method: 'post',
-        url: 'http://localhost:4000/api/rest/getRelatedQuestions',
+        url: '/api/rest/getRelatedQuestions',
         data: {"keyWords":searchTerm},
         config: { headers: {'Content-Type': 'application/json' }},
         credentials: 'same-origin'
@@ -175,7 +175,7 @@ class Login extends Component {
     var self = this;
     axios({
         method: 'post',
-        url: 'http://localhost:4000/api/rest/login',
+        url: '/api/rest/login',
         data: {"mailId":enteredEmailValue,"passWord":enteredPwdValue},
         config: { headers: {'Content-Type': 'application/json' }},
         credentials: 'same-origin'
@@ -293,7 +293,7 @@ class CreateAccount extends Component {
     var self = this;
     axios({
       method: 'post',
-      url: 'http://localhost:4000/api/rest/createAccount',
+      url: '/api/rest/createAccount',
       data: {"userName":enteredUNameValue,"mailId":enteredEmailValue,"passWord":enteredPwdValue,"tags":arr},
       config: { headers: {'Content-Type': 'application/json' }},
       credentials: 'same-origin'
@@ -362,7 +362,7 @@ class ForgotPwd extends Component
     var _self = this;
     axios({
       method: 'post',
-      url: 'http://localhost:4000/api/rest/forgotPassword',
+      url: '/api/rest/forgotPassword',
       data: {"mailId":emailValue},
       config: { headers: {'Content-Type': 'application/json' }},
       credentials: 'same-origin'

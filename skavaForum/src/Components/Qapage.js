@@ -18,7 +18,7 @@ class Qa extends Component {
         var _self = this;
         axios({
             method: 'post',
-            url: 'http://localhost:4000/api/rest/getQuqAnsById',
+            url: '/api/rest/getQuqAnsById',
             data: {"questionId":questionId},
             config: { headers: {'Content-Type': 'application/json' }},
             credentials: 'same-origin'
@@ -34,7 +34,7 @@ class Qa extends Component {
             });
             axios({
                 method: 'get',
-                url: 'http://localhost:4000/api/rest/getTagsByUserId',
+                url: '/api/rest/getTagsByUserId',
                 config: { headers: {'Content-Type': 'application/json' }},
                 credentials: 'same-origin'
                 })
@@ -160,7 +160,7 @@ addAnswer(event)
     var _self = this;
         axios({
             method: 'post',
-            url: 'http://localhost:4000/api/rest/addUserAnswer',
+            url: '/api/rest/addUserAnswer',
             data: {"QuestionId":QuestionId,"UserId":userId,"Description":description},
             config: { headers: {'Content-Type': 'application/json' }},
             credentials: 'same-origin'

@@ -119,7 +119,7 @@ render() {
     if(noError){
        axios({
         method: 'post',
-        url: 'http://localhost:4000/api/rest/addUserQuestion',
+        url: '/api/rest/addUserQuestion',
         data: {"QuestionId":QuestionId,"UserId":userId,"RelatedTags":tagArr,"Title":QuestionTitle,"Description":quesDescription},
         config: { headers: {'Content-Type': 'application/json' }},
         credentials: 'same-origin'

@@ -32,8 +32,8 @@ app.use(function(req, res, next) {
   next();
 });
 routes(app);
-
-var server = app.listen(4000, function () {
+var port = process.env.PORT || 8080; 
+var server = app.listen(port, function () {
   console.log("app running on port.", server.address().port);
 });
 
