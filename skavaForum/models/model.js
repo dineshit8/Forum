@@ -75,7 +75,64 @@ exports.getuser = function(req, res, cbk)
         db.close();
     });
 }
-
+exports.deleteAnswer = function(req, res, cbk)
+{
+    MongoClient.connect(url, function (err, db) {
+        if(err) throw err;
+        dbo = db.db("forum");
+        dbo.collection('answers').updateOne(
+            {"questionId": req.qid}, 
+            { $pull: { "answerDescription" : { "answerId": req.ansid } } },
+            {} 
+        );
+        cbk("","success")
+    db.close();
+    });
+}
+exports.addComment = function(req, res, cbk)
+{
+    MongoClient.connect(url, function (err, db) {
+        var commetnObject = {};
+        commetnObject.postedDate = new Date(Date.now()).toDateString();
+        commetnObject.description = req.commentDesc;
+        commetnObject.userName  = req.userName;
+        commetnObject.commentId = req.commentId;
+        commetnObject.userId = req.userId;
+        if(err) throw err;
+        dbo = db.db("forum");
+        dbo.collection('answers').updateOne({
+            $and: [{ questionId: req.qid }, {
+                answerDescription: {
+                    $elemMatch: {
+                        $and: [{ answerId: req.ansid }]
+                    }
+                }
+            }]   
+        }, { $push: {"answerDescription.$.commentArr": { 'commentDescription': commetnObject }}}, function(err, result) {
+            cbk(null, result);
+        });
+     db.close();
+    });
+}
+exports.deleteComment = function(req, res, cbk)
+{
+    MongoClient.connect(url, function (err, db) {
+        if(err) throw err;
+        dbo = db.db("forum");
+        dbo.collection('answers').updateOne({
+            $and: [{ questionId: req.qid }, {
+                answerDescription: {
+                    $elemMatch: {
+                        $and: [{ answerId: req.ansid }]
+                    }
+                }
+            }]   
+        }, { $pull: {"answerDescription.$.commentArr": { 'commentDescription.commentId': req.commentId }}}, function(err, result) {
+            cbk(null, result);
+        });
+        db.close();
+    });
+}
 exports.addQuestion = function(reqObj, res, cbk) {
     MongoClient.connect(url, function (err, db) {
         if(err) throw err;
@@ -99,8 +156,9 @@ exports.addAnswer = function(reqObj, res, cbk)
     ansDescriptionObj.questionId = parseFloat(reqObj.questionId);
     ansDescriptionObj.userId = reqObj.userId;
     ansDescriptionObj.description = reqObj.description;
-    ansDescriptionObj.postedDate = new Date();
+    ansDescriptionObj.postedDate = new Date(Date.now()).toDateString();
     ansDescriptionObj.userName = reqObj.userName;
+    ansDescriptionObj.commentArr = [];
     MongoClient.connect(url, function (err, db) {
     if(err) throw err;
     dbo = db.db("forum");
@@ -202,11 +260,11 @@ exports.forgotPwd = function(req, res, cbk)
                 //cbk(false,userProfile[0]);
                 var myquery = { mailId:userProfile[0].mailId };  
                     var newvalues = { $set: {resetPasswordToken: req.token, resetPasswordExpires: Date.now() + 3600000 }};  
-                    dbo.collection("userinfo").updateOne(myquery, newvalues, function(err, res) {  
+                const cursor = dbo.collection("userinfo").updateOne(myquery, newvalues, function(err, res) {  
                         if (err) throw err;  
                         console.log("1 document updated");  
-                    });  
                     cbk(false,userProfile[0]);
+                    });  
             }
             else
             {
@@ -333,20 +391,51 @@ exports.getQuqAnsById = function(req,res,cbk)
     });
 }
 
-exports.getTagsByUserId = function(req,res,cbk)
+exports.getValueByUserId = function(req, res, flag, cbk)
 {
     MongoClient.connect(url , function(err , db)
     {
         if(err) throw err;
         var dbo = db.db("forum");
-        const cursor = dbo.collection('userinfo').find({userId : req.session.userId}).project({"tags" : 1 , _id : 0}).toArray(function(err,tags){  
+        if(flag && flag == "tags")
+        {
+            if(req.session.userId)
+            {
+            const cursor = dbo.collection('userinfo').find({userId : req.session.userId}).project({"tags" : 1 , _id : 0}).toArray(function(err,tags)
+            {  
             if (tags.length) {  
                 cbk(false,tags);
             }
             else
             {
+                        cbk("No tags Present for this user");
+                }
+            });
+        }
+            else
+            {
                 cbk("Please Login...");
             }
+        }
+        else if(flag && flag == "mail" && req.userId)
+        {
+            if(req.userId)
+        {
+           const cursor = dbo.collection('userinfo').find({userId : req.userId}).project({"mailId" : 1 , _id : 0}).toArray(function(err,mailValue)
+            {  
+                if (mailValue.length) {  
+                    cbk(false,mailValue);
+                }
+                else
+                {
+                            cbk("No mailId present");
+                }
         });
+            }
+            else
+            {
+                cbk("Request Failed...");
+            }
+        }
     });
 }

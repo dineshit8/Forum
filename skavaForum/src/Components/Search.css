@@ -28,6 +28,7 @@
 }
 .questionTitle{
   width: 100%;
+  cursor: pointer;
 }
 .relatedTag{
   box-sizing: border-box;
@@ -38,12 +39,10 @@
 }
 .relatedTagName{
   color: #4682b4;
-  font-style: italic;
-  text-decoration: underline;
-  font-weight: 700;
 }
-.questionDesc{
+.searchPage .questionDesc{
   font-size: 18px;
+  cursor: pointer;
 }
 .tagsName{
   float: left;
@@ -57,4 +56,8 @@
 }
 .relatedTag.tagAlign {
   margin: 10px;
+}
+.relatedTagName span.tagsBackground
+{
+  float: none;
 }

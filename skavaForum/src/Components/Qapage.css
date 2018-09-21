@@ -13,7 +13,7 @@
     margin-bottom: 15px;
     display: inline-block;
 }
-.qDescription , .qaContainer
+.qDescription , .qaContainer , .mainContainer
 {
     width: 100%;
 }
@@ -29,7 +29,7 @@
 }
 .tagcontainer
 {
-    max-width: 24%;
+    max-width: 22%;
     display: inline-block;
     margin-left:15px;
 }
@@ -37,7 +37,7 @@
 {
     height: 100%;
     width: 100%;
-    display: inline-block;
+    float: left;
 }   
 .noOfAnswers
 {
@@ -47,8 +47,6 @@
 .votes
 {
     display: inline;
-    float: left;
-    height: 20px;
 }
 .answer p , .postAns textarea
 {
@@ -67,7 +65,7 @@
 {
     padding-bottom: 20px;
     display: inline-block;
-    border-bottom: 3px solid #e4e6e8;
+    border-bottom: 5px solid #e4e6e8;
     width: 100%;
 }
 .postedInfo
@@ -89,4 +87,130 @@
 .qpageTopContainer .description
 {
     max-width: 75%;
+}
+.mainContainer
+{
+    float: left;
+}
+.postedDateValues span:not(.posteDate) , .postedByValues span:not(.postedby)
+{
+    font-size: 13px;
+}
+.postedInformation
+{
+    font-size: 15px;
+}
+.loginSignup
+{
+    margin: 15px 0px;
+    color: #FF0000;
+    display: inline-block;
+}
+.postedby , .posteDate
+{
+    display: block;
+    font-weight: bold;
+}
+.firstAnswer
+{
+    color: #FF0000;
+}
+.deleteCont
+{
+    margin-right: 10px;
+}
+.deleteCont , .commentCont
+{
+    margin-top: 5px;
+    height: 20px;
+    display: inline-block;
+    cursor: pointer;
+}
+.deleteCont img , .commentCont img {
+    height:20px;
+}
+.RichTextEditor__editor___1QqIU
+{
+    height: 130px;
+}
+.commentsContainer
+{
+    clear: both;
+    margin-left: 10px;
+    margin-right: 10px;
+    border: 1px solid #e4e6e8;
+    -webkit-animation: slide-down .5s ease-out;
+   
+}   
+@-webkit-keyframes slide-down {
+    0% { opacity: 0; -webkit-transform: translateZ(-100%); }   
+  100% { opacity: 1; -webkit-transform: translateZ(0); }
+}
+
+.addcommentsCont , .showCommentCont
+{
+    padding: 15px;
+    font-size: 13px;
+}
+.showCommentCont
+{
+    padding-left: 30px;
+    display: grid;
+}
+button.addcomment
+{
+    height: 30px;
+    font-size: 13px;
+    display: block;
+}
+.addCommentArea
+{
+    width: 80%;
+    padding: 10px;
+    resize: none;
+    overflow: auto;
+}
+.contentsList
+{
+    display: inline-grid;
+}
+.comments
+{
+    background-color: #ededed;
+    padding: 5px 0px;
+    display: inline;
+    margin: 5px 0px;
+}
+.answerContainer
+{
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+    display: inherit;
+}
+.show 
+{
+    display: block !important;
+}
+.deleteComment
+{
+    height: 15px;
+    float: right;
+    margin-top: 0px;
+    margin-right: 0px;
+}
+.deleteComment img
+{
+    height: 15px;
+}
+.commentPostedInfo
+{
+    float:right;
+    padding-right: 5px;
+}
+.commentedUser
+{
+    padding-right: 5px;
+    font-size: 12px;
+    font-style: italic;
 }

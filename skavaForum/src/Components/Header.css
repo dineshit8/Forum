@@ -21,13 +21,14 @@ html , body , #root{
   height: 81px;
   background-size: 0px -15px;
   background-repeat: no-repeat;
+  cursor: pointer;
 }
 .s-bar
 {
   float: left;
   margin:24px 0px 24px 80px;
   max-width: 364px;
-  width: 100%;
+  width: 50%;
 }
 .in-search
 {
@@ -49,13 +50,18 @@ html , body , #root{
 {
   float: right;
   vertical-align: middle;
-  margin: 33px 55px 0px;
+  margin: 33px 55px 0px 10px;
 }
 .loginParent
 {
   float: left;
   margin-right: 10px;
   cursor: pointer;
+  display: inline-flex;
+}
+.profile
+{
+  margin-left: 12px;
 }
 #signContainer
 {
@@ -157,7 +163,7 @@ html , body , #root{
 .content{
   position: absolute;
   top: 85px;
-  padding: 40px;
+  padding: 40px 40px 65px 40px;
   width: 95%;
 }
 .tagsBackground
@@ -171,4 +177,57 @@ html , body , #root{
     padding: 2px;
     box-sizing: border-box;
     text-transform: capitalize;
+    font-size: 16px;
+}
+.social_login_cont {
+    margin-top: 20px;
+}
+.google_signin button {
+    display: inline-block;
+    padding: 0;
+    height: 35px;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    padding-right: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    text-align: center;
+    background: #DD4B39;
+    color: #fff;
+    min-width: 96px;
+    cursor: pointer;
+}
+.note
+{
+  font-size: 12px;
+  display: block;
+  font-family: sans-serif;
+  margin-top: 5px;
+  color: #003a70;
+}
+.footer 
+{
+  width: 100%;
+  margin: 0px 4px;
+  height: 60px;
+  background: #003a70;
+  position: fixed;
+  bottom: 1px;
+  color: #fff;
+  z-index: 11;
+}
+.footerContent
+{
+  text-align: center;
+  margin: 22.5px auto;
+  font-size: 15px;
+}
+.leftcontent
+{
+    float: left;
+    width: 70%;
+}
+.posFixed
+{
+  position:fixed;
 }

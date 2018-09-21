@@ -12,7 +12,8 @@ constructor(props) {
 }
 //getQuestions();
 render(){
-    if(this.props.searchData) {
+   if(this.props.searchData && this.props.searchData.length) {
+         var self = this;
         return(
             <div className="searchPage">
             	<div className="questContainer">
@@ -22,11 +23,10 @@ render(){
 		                {
 		                    this.props.searchData.map(function(questions,i){
 			                    return <div className={"parentListDiv list_0" + i}>
-			                      <div className="questionDesc">{questions.title}</div> <br/>
-			                      <div className="questionType">{questions.description}</div> <br/>
+			                     <div className="questionDesc" qid={questions.questionId} onClick={self.navigateQuestion.bind(this)} >{questions.title}</div> <br/>
+			                      <div className="questionType"><div dangerouslySetInnerHTML={{ __html: questions.description }}/></div> <br/>
 			                      <div className="questionTitle">
-			                      		<div className="relatedTag">Related Tags</div> 
-			                      		<div className="relatedTagName">{questions.relatedTags.map(function(tags, index){return tags})}</div>
+			                      		<div className="relatedTagName">{questions.relatedTags.map(function(tags, index){return <span className="tagsBackground">{tags}</span>})}</div>
 			                      </div> 
 			                    </div>;
 		                	})
@@ -48,6 +48,10 @@ render(){
            </div>
         )
     }
+    else
+        {
+            return "No Search Results Found..."
+        }
     }
     
 getQuestions()
@@ -63,12 +67,16 @@ getQuestions()
       })
       .then((response) => {
         console.log(response);  
-        self.setState({data : response && response.data ? response.data : ""});
-       
+         self.setState({data : response && response.data ? response.data : ""});
       })
       .catch(function (response) {
          console.log(response);
       });
   }
+  navigateQuestion(self)
+    {
+        var QuestionId = self ? self.target.getAttribute("qid") : "";
+        window.location.href = "/Qa?id="+QuestionId;
+    }
 }
 export default Search;

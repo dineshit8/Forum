@@ -14,7 +14,6 @@
     box-shadow: inset 0 250px 0 #e7e8ea;
 }
 .profileDetails{
-    width: 50%;
     float: left;
     padding: 20px;
 }
@@ -31,9 +30,6 @@
 .profileAboutMe{
     font-size: 15px;
 }
-.tagDetails{
-    padding-top: 240px;
-}
 .tagName, .postName{
     padding-top: 20px;
     font-size: 15px;
@@ -49,4 +45,34 @@
     width: 5%;
     float: right;
     padding-top: 60px;
+}
+.profileName
+{
+    float: left;
+    padding-left: 20px;
+}
+.profileUserDetails , .profileContainer
+{
+    float: left;
+}
+.profileContainer
+{
+    width: 100%;
+}
+.profileUserDetails
+{
+    padding-top: 20px;
+}
+.tagDetails
+{
+    padding-top: 10px;
+}
+.tags{
+padding-top: 5px;
+}
+.JoinedIn
+{
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: 700;
 }

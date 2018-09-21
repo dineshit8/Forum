@@ -1,5 +1,5 @@
 var modelObj = require("../models/model.js");
-const bcrypt = require('bcrypt');
+const bcrypt = require('../server.js').bcrypt;
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 exports.getWelcomeMsg = function(req,res){
@@ -11,7 +11,7 @@ exports.createAccount = function(req , res) {
     if(contype && contype.indexOf('application/json') >=0)
     {
         req.checkBody('userName','User Name is required').notEmpty();
-        req.checkBody('mailId', 'Mail_Id is required').isEmail();
+        req.checkBody('mailId', 'Mail Id is required').isEmail();
         if(req.checkBody('passWord', 'PassWord is required').notEmpty())
         {
             req.checkBody('passWord','Password should match the valid pattern.').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
@@ -43,6 +43,7 @@ exports.createAccount = function(req , res) {
                         manipulatedReq.passWord = response;
                         var mail = manipulatedReq.mailId;
                         manipulatedReq.userId = "SKA"+(Math.floor(Math.random() * 90000) + 10000) + mail.split("@")[0].toUpperCase();
+                        manipulatedReq.joinDate = new Date(Date.now()).toDateString();
                         modelObj.addUser(manipulatedReq, res, function (err, result) {
                             if (err) {
                             res.status(200).json({ message: 'Failure' });
@@ -101,6 +102,7 @@ exports.signIn = function(req , res)
                             var session = req.session;
                             session.userId = result.userId;
                             session.userName = result.userName;
+                            session.userMail = result.mailId;
                             req.session.save();
                             //res.cookie('s_Ts_cookie', 1, {maxAge: 300000, Path : "/"});
                             res.cookie('userId',result.userId,{maxAge:300000,Path:"/"});
@@ -121,16 +123,145 @@ exports.signIn = function(req , res)
         res.status(400).json({ message:'Bad Request',status: 'Failure'});
     }
 }
+exports.getProfile = function(req , res)
+{
+    if(req.session.userId)
+    {
+        var manipulatedReq = {};
+        manipulatedReq.mailId = req.session.userMail;
+        modelObj.getuser(manipulatedReq, res, function (err, result) {
+            if (err)
+            {
+                res.status(200).json({ message: err , "status":"Failure"});
+            } 
+            else 
+            {
+                result.passWord = "*****";
+                res.status(200).json({"status":"success",children : result})
+            }
+        });
+    }
+}
+exports.deleteAnswer = function(req, res)
+{
+    var contype = req ? req.headers['content-type'] : "";
+    if(contype && contype.indexOf('application/json') >=0 && req && req.session.userId)
+    {
+        var requestBody =  req.checkBody;
+        requestBody('answerId', 'answerId is required').notEmpty();
+        requestBody('questionId', 'questionId is required').notEmpty()
+        var errors = req.validationErrors();
+        if(errors)
+        {
+            res.send(errors);
+        }
+        else
+        {
+        var manipulatedReq = {};
+        manipulatedReq.ansid = req.body.answerId;
+        manipulatedReq.qid = req.body.questionId;
+         modelObj.deleteAnswer(manipulatedReq, res, function (err, result) 
+            {
+                if (err)
+                {
+                    res.status(200).json({ message: err , "status":"Failure"});
+                } 
+                else 
+                {
+                    res.status(200).json({"status":"success",children : result})
+                }
+            });
+        }
+    }
+}
+exports.addComments = function(req , res)
+{
+    var contype = req ? req.headers['content-type'] : "";
+    if(contype && contype.indexOf('application/json') >=0 && req && req.session.userId)
+    {
+        var requestBody =  req.checkBody;
+        requestBody('commentDesc', 'commentDesc is required').notEmpty();
+        requestBody('answerId', 'answerId is required').notEmpty();
+        requestBody('questionId', 'questionId is required').notEmpty()
+        var errors = req.validationErrors();
+        if(errors)
+        {
+            res.send(errors);
+        }
+        else
+        {
+            var manipulatedReq = {};
+            manipulatedReq.ansid = req.body.answerId;
+            manipulatedReq.qid = req.body.questionId;
+            manipulatedReq.commentDesc = req.body.commentDesc;
+            manipulatedReq.userName = req.session.userName;
+            manipulatedReq.userId = req.session.userId;
+            manipulatedReq.commentId = Math.floor(Math.random() * 1000000000000) + new Date().getTime();
+            modelObj.addComment(manipulatedReq, res, function (err, result) 
+            {
+                if (err)
+                {
+                    res.status(200).json({ message: err , "status":"Failure"});
+                } 
+                else 
+                {
+                    res.status(200).json({"status":"success",message : "Comments Added"})
+                }
+            });
+        }
+    }
+    else{
+        res.cookie('userId', "",{ Path:'/'});
+        res.status(200).json({"status":"Failure",message : "Kindly login"});
+    }
+}
+exports.deleteComment = function(req , res)
+{
+    var contype = req ? req.headers['content-type'] : "";
+    if(contype && contype.indexOf('application/json') >=0 && req && req.session.userId)
+    {
+        var requestBody =  req.checkBody;
+        requestBody('answerId', 'answerId is required').notEmpty();
+        requestBody('questionId', 'questionId is required').notEmpty();
+        requestBody('commentId', 'commentId is required').notEmpty();
+        var errors = req.validationErrors();
+        if(errors)
+        {
+            res.send(errors);
+        }
+        else
+        {
+            var manipulatedReq = {};
+            manipulatedReq.ansid = req.body.answerId;
+            manipulatedReq.qid = req.body.questionId;
+            manipulatedReq.commentId = req.body.commentId;
+            modelObj.deleteComment(manipulatedReq, res, function (err, result) 
+            {
+                if (err)
+                {
+                    res.status(200).json({ message: err , "status":"Failure"});
+                } 
+                else 
+                {
+                    res.status(200).json({"status":"success",message : "Comments Deleted"})
+                }
+            });
+        }
+    }
+    else{
+        res.cookie('userId', "",{ Path:'/'});
+        res.status(200).json({"status":"Failure",message : "Kindly login"});
+    }
+}
 exports.signout = function(req , res) 
 {
-    //res.cookie('s_Ts_cookie','', {httpOnly: true });
+    req.session.save( function(err) {
     req.session.destroy(function(err) {
-        if(err) {
+            if(err) 
           console.log(err);
-        }
       });
-    res.cookie('userId', 0,{ Path:'/'});
-    //res.cookie('s_Ts_cookie').destroy();
+    });
+    res.cookie('userId', "",{ Path:'/'});
     res.status(200).send({message:"Logout Success","status":"success"});
 }
 
@@ -165,6 +296,13 @@ exports.addUserQuestion = function(req, res) {
                 }
             });
         }
+            else
+            {
+                res.cookie('userId', "",{ Path:'/'});
+                res.status(200).json({  message: 'session timed out' });
+            }
+            
+        }
     } else {
         res.status(400).json({ message: 'Bad Request', status: 'Failure' });
     }
@@ -190,6 +328,8 @@ exports.addUserAnswer = function(req, res) {
             reqObj.answerId = Math.floor(Math.random() * 1000000000000) + new Date().getTime();
             reqObj.userId = req.session.userId;
             reqObj.description = req.body.Description;
+            if(req.session.userName)
+            {
             reqObj.userName = req.session.userName;
             modelObj.addAnswer(reqObj, res, function(err, result) {
                 if (err) {
@@ -198,6 +338,12 @@ exports.addUserAnswer = function(req, res) {
                     res.status(200).json({ message: "Answer updated sucessfully", status: 'Success' });
                 }
             });
+        }
+            else{
+                res.cookie('userId', "",{ Path:'/'});
+                res.status(200).json({ message: 'Failure' });
+                
+            }
         }
     } else {
         res.status(400).json({ message: 'Bad Request', status: 'Failure' });
@@ -259,8 +405,8 @@ exports.forgotPwd = function(req,res)
                     {  
                         service: 'gmail',  
                         auth: {  
-                        user: "riderdinesh2610@gmail.com",  
-                        pass: "crazyias"  
+                        user: "skavaforum@gmail.com",  
+                        pass: "developers@123"  
                         }  
                     }); 
                 const mailOptions = {  
@@ -269,7 +415,7 @@ exports.forgotPwd = function(req,res)
                     subject: 'Node.js Password Reset',  
                     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +  
                         'Please click on the following link, or paste this into your browser to complete the process:\n\n' +  
-                        '/reset/' + manipulatedReq.token + '\n\n' +  
+                        'http://'+ req.headers.host  +'/reset?' + manipulatedReq.token + '\n\n' +  
                         'If you did not request this, please ignore this email and your password will remain unchanged.\n'  
                 }; 
                 smtpTransport.sendMail(mailOptions, function(err) {                 
@@ -322,7 +468,7 @@ exports.updatePaswword = function(req,res)
 {
     if(req)
     {
-        hashPwd(req.body.Password , function(response)
+        hashPwd(req.body.PassWord , function(response)
         {
             var manipulatedReq = {};
             manipulatedReq.token = req.body.token;
@@ -372,7 +518,7 @@ exports.getQuqAnsById = function(req, res) {
 exports.getTagsByUserId = function(req, res) {
     if(req)
     {
-        modelObj.getTagsByUserId(req, res, function(err, result) 
+        modelObj.getValueByUserId(req, res, "tags", function(err, result) 
         {
             if(err) 
             {
@@ -386,6 +532,56 @@ exports.getTagsByUserId = function(req, res) {
         sessionReload(req);
     }   
 }
+exports.getMailIdByUserId = function(req, res) {
+    if(req)
+    {
+        manipulatedReq = {};
+        manipulatedReq.userId = req.body.userId;
+        modelObj.getValueByUserId(manipulatedReq, res, "mail", function(err, result) 
+        {
+            if(err) 
+            {
+                res.status(200).json({"status":"Failure",message : err})
+            }
+            if(result)
+            {
+                res.status(200).json({"status":"success",children : result})
+            }
+        });
+        sessionReload(req);
+    }   
+}
+exports.sendMailNotify = function(req, res)
+{
+    if(req)
+    {
+        var manipulatedReq = {};
+        manipulatedReq.questionId = req.body.Qid;
+        manipulatedReq.mailId = req.body.mailId;
+        var smtpTransport = nodemailer.createTransport(
+            {  
+                service: 'gmail',  
+                auth: {  
+                user: "skavaforum@gmail.com",  
+                pass: "developers@123"  
+                }  
+            }); 
+        const mailOptions = {  
+            to: manipulatedReq.mailId,  
+            from: 'passwordreset@demo.com',  
+            subject: 'Hey your question has got an answer :) ',  
+            text: 'The question which you posted in Skava Forum has been answered by someone.\n\n' +  
+                'Please click on the following link, or paste this into your browser to view the answer:\n\n' +  
+                'http://'+ req.headers.host  +'/Qa?id=' + manipulatedReq.questionId + '\n\n' +  
+                'Keep posting your valuable questions... Thanks !! .\n'  
+        }; 
+        smtpTransport.sendMail(mailOptions, function(err) {                 
+            res.json({status : 'success', message : 'An e-mail has been sent to the above mail-Id with further instructions.'});              
+            //done(err, 'done');  
+        });  
+    }
+}
+
 // custom functions
 function hashPwd(pwd , cbk)
 {
@@ -409,8 +605,8 @@ function generateToken(cbk)
 }
 function sessionReload(req)
 {
+    req.session.save( function(err) {
     req.session.reload(function(err) {
-        console.log("session Err" + err);
-        // session updated
+        });
       });
 }

@@ -5,9 +5,13 @@ var ObjectId = require('mongodb').ObjectID;
 var bodyParser = require('body-parser');
 var routes = require("./routes/routes.js");
 var cookieParser = require('cookie-parser'); 
+const bcrypt = require('bcrypt');
+io = require('socket.io');
+module.exports.bcrypt = bcrypt;
 const expressValidator = require('express-validator');
 var nodemailer = require('nodemailer');
 var session = require('express-session')
+var path = require("path");
 var app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -32,8 +36,29 @@ app.use(function(req, res, next) {
   next();
 });
 routes(app);
+io.sockets.on('connection',function(socket){
+  socket.on('send message',function(data){
+      io.sockets.emit('new message',{message:data,username:socket.username});
+  });
+
+  socket.on('disconnect',function(data){
+      if(!socket.username) return;
+      usernames.splice(usernames.indexOf(socket.username),1);
+  });
+});
+if(process.env.NODE_ENV === 'production'){
+  //set static folder
+  app.use(express.static('build'));
+}
+//app.use(express.static(path.join(__dirname, 'client/build')));
+app.get('*',(req, res) => {
+  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
+});
+
 var port = process.env.PORT || 8080; 
-var server = app.listen(port, function () {
+var server = app.listen(4000, function () {
   console.log("app running on port.", server.address().port);
 });
+
+
 

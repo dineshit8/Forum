@@ -1,23 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component} from 'react';
+import PropTypes from 'prop-types'
 import './PostQuestion.css';
 import axios from 'axios';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Link , Redirect} from 'react-router-dom';
+import { BrowserRouter as  Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
-import Home from './Home';
+import RichTextEditor from 'react-rte';
 export class PostQuestion extends Component {
   constructor(props)
   {
-  super(props);
-  this.state = {title:"",tags:"",quesId:"",userId:"",quesDescription:"",showErrordomQuestionTitle:{display:"none"},showErrordomQuestionDescription:{display:"none"},addedTags:{display:"none"},showErrordomTag:{display:"none"} , userId : Cookies.get('userId')  };
-  this.handleQuestionTitle = this.handleQuestionTitle.bind(this);
-  this.handleuserId = this.handleuserId.bind(this); 
-  this.handlequesDescription = this.handlequesDescription.bind(this); 
-  this.handleClick = this.handleClick.bind(this);
-  this.handleTagList = this.handleTagList.bind(this);
-  this.addQuestion = this.addQuestion.bind(this);
-  
+    super(props);
+    this.state = {richValue: RichTextEditor.createValueFromString("", 'html'),htmlValue: "", title:"",tags:"",quesId:"",quesDescription:"",showErrordomQuestionTitle:{display:"none"},showErrordomQuestionDescription:{display:"none"},addedTags:{display:"none"},showErrordomTag:{display:"none"} , userId : Cookies.get('userId')  };
+    this.handleQuestionTitle = this.handleQuestionTitle.bind(this);
+    this.handleuserId = this.handleuserId.bind(this); 
+    this.handlequesDescription = this.handlequesDescription.bind(this); 
+    this.handleClick = this.handleClick.bind(this);
+    this.handleTagList = this.handleTagList.bind(this);
+    this.addQuestion = this.addQuestion.bind(this);
+    this.onChange = this.onChange.bind(this);
 }
+static propTypes = {
+  onChange: PropTypes.func
+};
 //handleTagList = (e) =>{this.setState({tags:e.target.value})}
 handleQuestionTitle(e)
 {
@@ -37,15 +40,26 @@ handlequesDescription(e)
 }
 handleClick(e){
     if(this.state.tags != ""){
-        ReactDOM.render(<ButtonList data = {this.state.tags}/>,document.getElementById("tagList"));      
+        //ReactDOM.render(<ButtonList data = {this.state.tags}/>,document.getElementById("tagList"));
+        this.state.addedTagsDom.push(this.state.tags);
+        document.getElementById("tagInput").value = ''
         this.setState({addedTags :{display:'block'}});
     }else{
         this.setState({showErrordomTag :{display:'block'}});
     }
   }
+handleDeleteTag(id) {
+  this.setState(this.state.addedTagsDom.splice(id,1));
+}
+onChange = (richValue) => {
+  this.setState({richValue, htmlValue: richValue.toString('html')}, () => {
+  });
+};
+
 render() {
   if(this.state.userId)
   {
+    var thisObj = this;
     return (
       <div>
         <div className="cls_postQuestion">
@@ -61,7 +75,11 @@ render() {
             <div className="quesDescription parentDiv">
               <div className="quesName titleDiv">Question Description</div>
               <div className="quesInput">
-            <textarea className="description" cols="92" rows="15" onChange={this.handlequesDescription}></textarea>
+            {/* <textarea className="description" cols="92" rows="15" onChange={this.handlequesDescription}></textarea> */}
+            <RichTextEditor className = "description" id="description"
+                value={this.state.richValue}
+                onChange={this.onChange}
+            />
               </div>
           <div id="errordom" style={this.state.showErrordomQuestionDescription}>Question Description is Required</div>
             </div>
@@ -69,10 +87,19 @@ render() {
           <div id="tagContainer"></div>
             </div>
             <div className="newTags parentDiv">
+            { this.state.addedTagsDom.length ?
+              <div>
           <div className="tagName titleDiv" style={this.state.addedTags}>Tags</div>
-          <div id="tagList"></div>
+          <div id="tagList">
+                     {this.state.addedTagsDom.map(function(tags, i){
+                        return <span className="btn tagButton" key={i}>{tags}<span className="deleteTag" onClick={() => thisObj.handleDeleteTag(i)}></span></span>;
+                      })}
+                    
+                </div>
+              </div>
+               : ""}
               <div className="newTagName titleDiv">New Tags</div>
-            <input type="text" name="tagInput" placeholder="Add tag name (max 4 tags)" maxLength="300" className="tagInput" onChange={this.handleTagList}/>
+            <input type="text" name="tagInput" placeholder="Add tag name (max 4 tags)" maxLength="300" className="tagInput" id="tagInput" onChange={this.handleTagList}/>
             <button type="button" className="btn newTagButton" onClick={this.handleClick}>Add Tag</button>
             <div id="errordom" style={this.state.showErrordomTag}>Tag is Required</div>
             </div>
@@ -94,10 +121,9 @@ render() {
     event.preventDefault();
     var QuestionTitle = this.state.title;
     var userId = this.state.userId;
-    var quesDescription = this.state.quesDescription;
+    var quesDescription = this.state.htmlValue;
     var QuestionId = Math.floor(Math.random() * 90000) + 10000;
-    var tagArr = this.state.tags;
-    tagArr = tagArr.split(",");
+    var tagArr = this.state.addedTagsDom
     var noError = true;
     var self = this;
     //var userId = this.state.userId; 
@@ -119,20 +145,26 @@ render() {
     if(noError){
        axios({
         method: 'post',
-        url: '/api/rest/addUserQuestion',
+        url: 'http://localhost:4000/api/rest/addUserQuestion',
         data: {"QuestionId":QuestionId,"UserId":userId,"RelatedTags":tagArr,"Title":QuestionTitle,"Description":quesDescription},
         config: { headers: {'Content-Type': 'application/json' }},
         credentials: 'same-origin'
       })
       .then((response) => {
         var responseData = response && response.data ? response.data : "";
-        if(responseData && responseData[0] && responseData[0].msg)
+        if(responseData && responseData.message && responseData.status && responseData.status == "Success")
         {
-          
+           window.location.href = "/";
+        } 
+        else if(responseData && responseData[0] && responseData[0].msg)
+        {
+          self.setState({errorValue:responseData[0].msg});
+          self.setState({showErrorDom:{display:'block'}});
         }
-        else if(responseData && responseData.message)
+        else if(responseData && responseData.message && responseData.message == "session timed out")
         {
-          
+            window.alert("Your session has been expired.. Kindly login");
+            window.location.reload();
         }
       })
       .catch(function (response) {
@@ -142,7 +174,7 @@ render() {
   }
 } 
 export default PostQuestion;
-class ButtonList extends Component {
+{/* class ButtonList extends Component {
   render() {
     var listitems = [];
     var tagArr = this.props.data;
@@ -154,4 +186,4 @@ class ButtonList extends Component {
    }
     return (listitems)
 }
-}
+}*/}

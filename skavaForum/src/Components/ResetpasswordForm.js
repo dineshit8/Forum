@@ -41,13 +41,13 @@ class ResetPassword extends Component {
         var self = this;
         if(window.location.href && window.location.href.indexOf("reset") >=0 )
         {
-            self.token = window.location.href.split("reset/").pop();
+            self.token = window.location.href.split("reset?").pop();
         }
         if(newPwd == reenteredPwd)
         {
             axios({
                 method: 'post',
-                url: 'http://localhost:4000/reset/updatePassword',
+                url: '/reset/updatePassword',
                 data: {"PassWord":newPwd,"token":self.token},
                 config: { headers: {'Content-Type': 'application/json' }}
                 })
@@ -55,13 +55,17 @@ class ResetPassword extends Component {
                   if(response && response.data && response.data.status && response.data.status == "success")
                   {
                     window.alert("Password Changed Successfully !.  Kindly login")
-                    window.location.reload();
+                    window.location.href = "/";
                   }
                 })
                 .catch(function (response) {
                     //handle error
                     console.log(response);
                 });
+        }
+        else
+        {
+            window.alert("Password doesnot match")
         }
     }
 }

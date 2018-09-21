@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import logo from './logo2.png';
+import logo from './logo2.svg';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import './Header.css';
 import Home from './Home';
 import PostQuestion from './PostQuestion';
 import Profile from './Profile';
-import { BrowserRouter as Router, Route, Link , Redirect} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Search from './Search';
 import Qa from './Qapage';
 import ResetPassword from './ResetpasswordForm';
+import SocialButton from './SocialButton';
 
 class Header extends Component {
   constructor(props)
@@ -33,7 +34,7 @@ class Header extends Component {
       <div className="mask" onClick={this.maskFunction} style={this.state.showMask}></div>
         <div className="header">
           <div className="leftcontent">
-            <div className="h-icon"><Link to="/"><img className="h-image-icon" src={logo}></img></Link></div>
+            <div className="h-icon"><img className="h-image-icon" src={logo} onClick={this.handleLogo}></img></div>
               <form id="search" className="s-bar" onSubmit={this.handleSearch}>
                 <div className="searchBar">
                   <input type="text" name="searchinput" placeholder="Search" maxLength="60" className="in-search" onChange={this.getSearchTerm} />
@@ -43,9 +44,14 @@ class Header extends Component {
           <div className="rightContent">
             <div className="loginParent">
             { this.state.userId ? 
-              <div className="profile"><Link to="/Profile">Profile</Link></div>
+              <div className="logout" onClick={this.handleLogout}>Logout</div>
               : 
               <div className="login" onClick={this.handleLogin}> Login </div>
+            }
+            { this.state.userId ? 
+               <div className="profile"><Link to="/Profile">Profile</Link></div>
+              : 
+              ""
             }
             </div>
             { this.state.userId ? 
@@ -63,9 +69,10 @@ class Header extends Component {
             <Route path="/Profile" component={Profile}/>
             <Route path="/PostQuestion" component={PostQuestion}/>
             <Route path="/Search" component={Search}/>
-            <Route path="/reset" component={ResetPassword}/>
+            <Route exact path="/reset" component={ResetPassword}/>
             <Route path="/qa" component={Qa}/>
           </div>
+          <div className="footer"><div className="footerContent">For any queries drop us a mail to skavaforum@gmail.com</div></div>
       </div>
       </Router>);
   }
@@ -77,18 +84,42 @@ class Header extends Component {
     this.maskFunction();
     ReactDOM.render(<Login/>,document.getElementById('signContainer'));
   };
+  handleLogout()
+  {
+    axios({
+        method: 'get',
+        url: 'http://localhost:4000/api/rest/logout',
+        config: { headers: {'Content-Type': 'application/json' }},
+        credentials: 'same-origin'
+      })
+      .then((response) => {
+         window.location.href = "/";
+      })
+      .catch(function (response) {
+         console.log(response);
+      });
+  }
+  handleLogo()
+  {
+    if(window.location.pathname.length > 1)
+    {
+        window.location.href = "/";
+    }
+  }
   handleAskQuestion() {
     ReactDOM.render(<PostQuestion/>,document.getElementById('id_askQuestion'));
-};
+  };
   maskFunction(e)
   {
     if(this.state.maskFlag)
     {
       this.setState({showMask : {display:"none"} , maskFlag : false , signinshowHide : {display:"none"}})
+      document.body.classList.remove("posFixed");
     }
     else
     {
       this.setState({showMask : {display:"block"} , maskFlag : true , signinshowHide : {display:"block"}})
+      document.body.classList.add("posFixed");
     }
   }
   handleSearch(event) {
@@ -97,7 +128,7 @@ class Header extends Component {
     var self = this;
     axios({
         method: 'post',
-        url: '/api/rest/getRelatedQuestions',
+        url: 'http://localhost:4000/api/rest/getRelatedQuestions',
         data: {"keyWords":searchTerm},
         config: { headers: {'Content-Type': 'application/json' }},
         credentials: 'same-origin'
@@ -105,7 +136,7 @@ class Header extends Component {
       .then((response) => {
         console.log(response);  
         self.setState({data : response && response.data ? response.data : ""});
-        //<Search searchData = {self.state.data}/>;
+        window.history.pushState("","","/search")
         ReactDOM.render(<Search searchData = {self.state.data}/>,document.getElementById('resultsCont'));
       })
       .catch(function (response) {
@@ -122,6 +153,8 @@ class Login extends Component {
     this.handlepwdchange = this.handlepwdchange.bind(this);
     this.signinFunction = this.signinFunction.bind(this);
     this.handleCreateAccnt = this.handleCreateAccnt.bind(this);
+    this.socialLoginSuccess = this.socialLoginSuccess.bind(this);
+    this.socialLoginFailure = this.socialLoginFailure.bind(this);
   }
   handleEmailchange(e)
   {
@@ -152,6 +185,17 @@ class Login extends Component {
                     <button type="submit" id="login_submitbtn">Sign In</button>
                   </div>
                 </form>
+                <div className="social_login_cont">
+                   <div className="google_signin"> 
+                    <SocialButton
+                        provider='google'
+                        appId='429836139384-lk18jo35ij4vrc9tae4ecqu5ljq8gkja.apps.googleusercontent.com'
+                        onLoginSuccess={this.socialLoginSuccess}
+                        onLoginFailure={this.socialLoginFailure}>
+                      Google
+                    </SocialButton>
+                  </div>
+                </div>
                 <div className="createaccnt_container">
                   <div className="dnttxt"> Don't have an account? </div>
                   <div className="createAccnt_link" onClick={this.handleCreateAccnt} > Create an Account</div>
@@ -175,7 +219,7 @@ class Login extends Component {
     var self = this;
     axios({
         method: 'post',
-        url: '/api/rest/login',
+        url: 'http://localhost:4000/api/rest/login',
         data: {"mailId":enteredEmailValue,"passWord":enteredPwdValue},
         config: { headers: {'Content-Type': 'application/json' }},
         credentials: 'same-origin'
@@ -203,6 +247,50 @@ class Login extends Component {
       .catch(function (response) {
          console.log(response);
       });
+  }
+  socialLoginSuccess(user) {
+    console.log(user);
+    var self = this;
+    var userData = {};
+    userData.mail = user._profile.email;
+    userData.userToken = user._profile.id;
+    userData.name = user._profile.name;
+    userData.provider = user._provider;
+    userData.profilePic = user._profile.profilePicURL;
+    axios({
+      method: 'post',
+      url: '/api/rest/socialLogin',
+      data: userData,
+      config: { headers: {'Content-Type': 'application/json' }},
+      credentials: 'same-origin'
+    })
+    .then((response) => {
+      var responseData = response && response.data ? response.data : "";
+      if(responseData && responseData[0] && responseData[0].msg)
+      {
+        self.setState({errorValue:responseData[0].msg});
+        self.setState({showErrorDom:{display:'block'}});
+      }
+      else if(responseData && responseData.message)
+      {
+        if(responseData.status && responseData.status === "Success")
+        {
+          window.location.reload();
+        }
+        else
+        {
+          self.setState({errorValue:responseData.message});
+          self.setState({showErrorDom:{display:'block'}});
+        }
+      }
+    })
+    .catch(function (response) {
+       console.log(response);
+    });
+
+  }
+  socialLoginFailure(err) {
+    console.error(err);
   }
   handleCreateAccnt()
   {
@@ -263,9 +351,11 @@ class CreateAccount extends Component {
                     </div>
                     <div className="mailId inputDiv">
                       <input type="text" name="mailInput" placeholder="Mail" value={this.state.mailInput} onChange={this.handleMailchange} maxLength="60" className="in-mailid" />
+                      <span className="note"> Note : Kindly sign-up with valid mail id to get notifications</span>
                     </div>
                     <div className="pwd inputDiv">
                       <input type="password" name="pwdInput" placeholder="Password" value={this.state.pwdInput} onChange={this.handlePwdchange} maxLength="60" className="in-pwd" />
+                      <span className="note">Note : Your password must contain 1 uppercase letter, 1 numeric and should be minimum of 8 characters.</span>
                     </div>
                     <div className="tags inputDiv">
                       <input type="text " name="tagInput" placeholder="Tags" value={this.state.tagInput} onChange={this.handleTagchange} maxLength="60" className="in-tags" />
@@ -293,7 +383,7 @@ class CreateAccount extends Component {
     var self = this;
     axios({
       method: 'post',
-      url: '/api/rest/createAccount',
+      url: 'http://localhost:4000/api/rest/createAccount',
       data: {"userName":enteredUNameValue,"mailId":enteredEmailValue,"passWord":enteredPwdValue,"tags":arr},
       config: { headers: {'Content-Type': 'application/json' }},
       credentials: 'same-origin'
@@ -362,19 +452,24 @@ class ForgotPwd extends Component
     var _self = this;
     axios({
       method: 'post',
-      url: '/api/rest/forgotPassword',
+      url: 'http://localhost:4000/api/rest/forgotPassword',
       data: {"mailId":emailValue},
       config: { headers: {'Content-Type': 'application/json' }},
       credentials: 'same-origin'
       })
       .then(function (response) {
-          if(response && response.data && response.data.status && response.data.status == "success")
+          var responseData = response && response.data ? response.data : "";
+          if(responseData.status && responseData.status == "success")
           {
-            window.location.reload();
+              window.location.href = "/";
+          }
+          else if(responseData && responseData[0] && responseData[0].msg)
+          {
+            _self.setState({errorValue:responseData[0].msg});
+            _self.setState({showErrorDom:{display:'block'}});
           }
           else
           {
-            var responseData = response && response.data ? response.data : "";
             if(responseData && responseData.message)
             _self.setState({errorValue: responseData.message});
             _self.setState({showErrorDom:{display:'block'}});
