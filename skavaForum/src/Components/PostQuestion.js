@@ -9,7 +9,7 @@ export class PostQuestion extends Component {
   constructor(props)
   {
     super(props);
-    this.state = {richValue: RichTextEditor.createValueFromString("", 'html'),htmlValue: "", title:"",tags:"",quesId:"",quesDescription:"",showErrordomQuestionTitle:{display:"none"},showErrordomQuestionDescription:{display:"none"},addedTags:{display:"none"},showErrordomTag:{display:"none"} , userId : Cookies.get('userId')  };
+    this.state = {richValue: RichTextEditor.createValueFromString("", 'html'),htmlValue: "", title:"",tags:"",quesId:"",quesDescription:"",showErrordomQuestionTitle:{display:"none"},showErrordomQuestionDescription:{display:"none"},addedTags:{display:"none"},showErrordomTag:{display:"none"} , userId : Cookies.get('userId'), addedTagsDom: []  };
     this.handleQuestionTitle = this.handleQuestionTitle.bind(this);
     this.handleuserId = this.handleuserId.bind(this); 
     this.handlequesDescription = this.handlequesDescription.bind(this); 

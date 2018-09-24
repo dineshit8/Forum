@@ -348,16 +348,26 @@ exports.updatePaswword = function(req,res,cbk)
 }
 exports.getQuestions = function(req,res,cbk)
 {
+    var limit = req.body.limit ? req.body.limit : 3;
+    var pageNumber = req.body.page ? req.body.page : 1;
     MongoClient.connect(url , function(err , db)
     {
         if(err) throw err;
         var dbo = db.db("forum");
-        dbo.collection('questions').find({}).toArray(function(err, results) 
+        var totalNoOfRecords;
+        var collection = dbo.collection('questions').find({});
+        collection.count(function(err, count) {
+            if(err) throw err;
+            totalNoOfRecords = count ? count : 0;
+        });
+        collection.limit(limit)
+        .skip((pageNumber - 1) * limit)
+        .toArray(function(err, results) 
         {
             if(err) throw err;
             if(results)
             {
-                cbk(false,results);
+                cbk(false,results,totalNoOfRecords);
             }
             else
             {

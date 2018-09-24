@@ -24,6 +24,9 @@ export class Profile extends Component{
                 {
                     _self.setState({profileData : response.data.children});
                 }
+                else{
+                    window.location.href = "/";
+                }
             })
             .catch(function (response) {
                 console.log(response);

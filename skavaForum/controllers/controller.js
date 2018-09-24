@@ -141,6 +141,10 @@ exports.getProfile = function(req , res)
             }
         });
     }
+    else
+    {
+        res.status(200).json({ message: "Please Login First" , "status":"Failure"});
+    }
 }
 exports.deleteAnswer = function(req, res)
 {
@@ -173,6 +177,7 @@ exports.deleteAnswer = function(req, res)
             });
         }
     }
+    sessionReload(req);
 }
 exports.addComments = function(req , res)
 {
@@ -214,6 +219,7 @@ exports.addComments = function(req , res)
         res.cookie('userId', "",{ Path:'/'});
         res.status(200).json({"status":"Failure",message : "Kindly login"});
     }
+    sessionReload(req);
 }
 exports.deleteComment = function(req , res)
 {
@@ -252,6 +258,7 @@ exports.deleteComment = function(req , res)
         res.cookie('userId', "",{ Path:'/'});
         res.status(200).json({"status":"Failure",message : "Kindly login"});
     }
+    sessionReload(req);
 }
 exports.signout = function(req , res) 
 {
@@ -286,16 +293,18 @@ exports.addUserQuestion = function(req, res) {
             reqObj.relatedTags = req.body.RelatedTags;
             reqObj.title = req.body.Title;
             reqObj.description = req.body.Description;
-            reqObj.postedDate = new Date();
-            reqObj.postedUserName = req.session.userName;
-            modelObj.addQuestion(reqObj, res, function(err, result) {
-                if (err) {
-                    res.status(200).json({ message: 'Failure' });
-                } else {
-                    res.status(200).json({ message: "Question updated sucessfully", status: 'Success' });
-                }
-            });
-        }
+            reqObj.postedDate = new Date(Date.now()).toDateString();
+            if(req.session.userName)
+            {
+                reqObj.postedUserName = req.session.userName;
+                modelObj.addQuestion(reqObj, res, function(err, result) {
+                    if (err) {
+                        res.status(200).json({ message: 'Failure' });
+                    } else {
+                        res.status(200).json({ message: "Question updated sucessfully", status: 'Success' });
+                    }
+                });
+            }
             else
             {
                 res.cookie('userId', "",{ Path:'/'});
@@ -426,6 +435,7 @@ exports.forgotPwd = function(req,res)
             });
         }
     }
+    sessionReload(req);
 }
 
 exports.getRelatedQuestion = function(req,res) {
@@ -450,6 +460,7 @@ exports.getRelatedQuestion = function(req,res) {
     {
         res.status(400).json({ message:'Bad Request',status: 'Failure'});
     }
+    sessionReload(req);
 }
 exports.resetPassword = function(req,res)
 {
@@ -463,6 +474,7 @@ exports.resetPassword = function(req,res)
             }
         });
     }
+    sessionReload(req);
 }
 exports.updatePaswword = function(req,res)
 {
@@ -484,9 +496,12 @@ exports.updatePaswword = function(req,res)
             });
         });
     }
+    sessionReload(req);
 }
 exports.getQuestions = function(req, res) {
-    modelObj.getQuestions(req, res, function(err, result) 
+    var contentType = req.headers['content-type'] ? req.headers['content-type'] : "";
+    if(contentType && contentType.indexOf('application/json') != -1) {
+        modelObj.getQuestions(req, res, function(err, result, count) 
         {
             if(err)
             {
@@ -494,9 +509,18 @@ exports.getQuestions = function(req, res) {
             }
             else
             {
-                res.status(200).json({"status":"success",message : result})
+                var paginationObj = {};
+                paginationObj.totalNoOfRecords = count;
+                paginationObj.page = req.body.page ? req.body.page : 1;
+                paginationObj.limit = req.body.limit ? req.body.limit : 3;
+                res.status(200).json({"status":"success",message : result, pagination: paginationObj})
             }
     });
+    sessionReload(req);
+}
+    else {
+        res.status(400).json({ message:'Bad Request',status: 'Failure'});
+    }
 }
 exports.getQuqAnsById = function(req, res) {
     var contentType = req.headers['content-type'] ? req.headers['content-type'] : "";
@@ -531,6 +555,68 @@ exports.getTagsByUserId = function(req, res) {
         });
         sessionReload(req);
     }   
+}
+exports.handleSocialLogin = function(req,res) {
+    var contype = req ? req.headers['content-type'] : "";
+    if(contype && contype.indexOf('application/json') >=0)
+    {
+        req.checkBody('name','User Name is required').notEmpty();
+        req.checkBody('mail', 'Mail_Id is required').isEmail();
+        req.checkBody('userToken', 'User Id not found').notEmpty();
+        var errors = req.validationErrors();
+        if(errors)
+        {
+            res.send(errors);
+        }
+        else
+        {
+            var manipulatedReq = {};
+            manipulatedReq.userName = req.body.name;
+            manipulatedReq.mailId = req.body.mail;
+            manipulatedReq.userToken = req.body.userToken;
+            manipulatedReq.provider = req.body.provider;
+            manipulatedReq.profilePic = req.body.profilePic;
+            //manipulatedReq.tags = req.body.tags;
+            modelObj.getuser(manipulatedReq, res, function (err, result) {
+            if (result && result.mailId)
+            {
+                var session = req.session;
+                session.userId = result.userId;
+                session.userName = result.userName;
+                session.userMail = result.mailId;
+                req.session.save();
+                res.cookie('userId',result.userId,{maxAge:300000,Path:"/"});
+                res.status(200).json({"user_name" : result.userName ,"userId": result.userId , message : "You have been logged into your account successfully.", "status":"Success"});
+            } 
+            else if(err && err == "User profile not found.")
+            {
+                var mail = manipulatedReq.mailId;
+                manipulatedReq.userId = "SKA"+(Math.floor(Math.random() * 90000) + 10000) + mail.split("@")[0].toUpperCase();
+                manipulatedReq.joinDate = new Date(Date.now()).toDateString();
+                modelObj.addUser(manipulatedReq, res, function (err, result) {
+                    if (err) {
+                    res.status(200).json({ message: 'Failure' });
+                    } else {
+                        modelObj.getuser(manipulatedReq, res, function (err, result) {
+                            var session = req.session;
+                            session.userId = result.userId;
+                            session.userName = result.userName;
+                            session.userMail = result.mailId;
+                            req.session.save();
+                            //res.cookie('s_Ts_cookie', 1, {maxAge: 300000, Path : "/"});
+                            res.cookie('userId',result.userId,{maxAge:300000,Path:"/"});
+                            res.status(200).json({"user_name" : result.userName ,"userId": result.userId , message : "You have been logged into your account successfully.", "status":"Success"});
+                    });
+                }
+                });
+            }
+            });
+        }
+    }
+    else
+    {
+        res.status(400).json({ message:'Bad Request',status: 'Failure'});
+    }
 }
 exports.getMailIdByUserId = function(req, res) {
     if(req)

@@ -13,7 +13,9 @@ constructor(props)
 }
 componentWillMount() {
 	var self = this;
-	self.getQuestions();
+	let params = (new URL(document.location)).searchParams;
+    let pageNum = params.get("page") ? parseInt(params.get("page")) : 1;
+	self.getQuestions(pageNum);
 	axios({
 		method: 'get',
 		url: 'http://localhost:4000/api/rest/getTagsByUserId',
@@ -30,9 +32,9 @@ componentWillMount() {
 getQuestions(currPage) {
 	var self = this;
 	var currPageNum = currPage ? currPage : 1;
-	var dataParam = {"page": currPageNum, "limit": 5};
+	var dataParam = {"page": currPageNum, "limit": 3};
 	axios({
-		method: 'get',
+		method: 'post',
 		url: 'http://localhost:4000/api/rest/getQuestions',
 		data: dataParam,
 		config: { headers: {'Content-Type': 'application/json' }},
@@ -56,7 +58,7 @@ render(){
 		 this.state.data.length ?
 		 	<div className="homePage">
             	<div className="questContainer">
-	                <div className="questTitle">Questions{this.state.pagination && this.state.pagination.totalNoOfRecords ? "("+this.state.pagination.totalNoOfRecords+")" : ""}</div>
+	                <div className="questTitle">All Questions{this.state.pagination && this.state.pagination.totalNoOfRecords ? "("+this.state.pagination.totalNoOfRecords+")" : ""}</div>
 	                <div className="LoginAskQuestion"></div>
                 	<div className="ListQuestions">
 		                {
@@ -120,10 +122,10 @@ class Pagination extends Component {
 		var thisObj = this.props.thisObj;
 		for(let index = 1; index <= totalNoOfPages; index++) {
 			if(index === currPage) {
-				pageList.push(<span className = "pageList currPage" id = {"page"+index} onClick={() => thisObj.handlePagination(index)}>{index}</span>);
+				pageList.push(<a href={"/home?page="+index} className = "pageList currPage" id = {"page"+index} onClick={() => thisObj.handlePagination(index)}>{index}</a>);
 			}
 			else {
-				pageList.push(<span className = "pageList" id = {"page"+index} onClick={() => thisObj.handlePagination(index)}>{index}</span>);
+				pageList.push(<a href={"/home?page="+index} className = "pageList" id = {"page"+index} onClick={() => thisObj.handlePagination(index)}>{index}</a>);
 			}
 		}
 		return(pageList);

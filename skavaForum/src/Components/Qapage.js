@@ -116,7 +116,7 @@ class Qa extends Component {
                                                                                 <span className="commentedUser"> {commentArr.commentDescription.userName} </span>
                                                                                 :""
                                                                             }
-                                                                            { thisObj.state.userId && answers.userId && thisObj.state.userId == answers.userId ?
+                                                                            { thisObj.state.userId && commentArr.commentDescription.userId && thisObj.state.userId == commentArr.commentDescription.userId ?
                                                                                 <span className="deleteCont deleteComment"><img src="https://png.icons8.com/metro/50/000000/trash.png" cid = {commentArr.commentDescription.commentId} qid = {answers.questionId} aid = {answers.answerId} onClick = {thisObj.handleDeleteComment.bind(this)}/></span>
                                                                             :""
                                                                             }
@@ -222,7 +222,6 @@ class Qa extends Component {
     {
         event.preventDefault(); 
         var postAnswerdom = this.refs.postAnswer;
-        var answerdom = this.refs.answerValue;
         var QuestionId = postAnswerdom.getAttribute('qid');
         var userId = postAnswerdom.getAttribute('uid');
         var description = this.state.htmlValue;

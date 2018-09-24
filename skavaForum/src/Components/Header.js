@@ -33,6 +33,7 @@ class Header extends Component {
       <div>
       <div className="mask" onClick={this.maskFunction} style={this.state.showMask}></div>
         <div className="header">
+          <div className="header_container">
           <div className="leftcontent">
             <div className="h-icon"><img className="h-image-icon" src={logo} onClick={this.handleLogo}></img></div>
               <form id="search" className="s-bar" onSubmit={this.handleSearch}>
@@ -63,9 +64,13 @@ class Header extends Component {
             : ""}
           </div>
         </div>
+        </div>
         <div id = "signContainer" style={this.state.signinshowHide}></div>
           <div className="content" id="resultsCont">
-            <Route exact path="/" component={Home}/>
+            <Route exact path="/" render={() => (
+              <Redirect to="/home"/>
+            )}/>
+            <Route exact path="/home" component={Home}/>
             <Route path="/Profile" component={Profile}/>
             <Route path="/PostQuestion" component={PostQuestion}/>
             <Route path="/Search" component={Search}/>
@@ -93,7 +98,7 @@ class Header extends Component {
         credentials: 'same-origin'
       })
       .then((response) => {
-         window.location.href = "/";
+         window.location.href = "/home";
       })
       .catch(function (response) {
          console.log(response);
@@ -101,9 +106,9 @@ class Header extends Component {
   }
   handleLogo()
   {
-    if(window.location.pathname.length > 1)
+    if(window.location.pathname != "/home")
     {
-        window.location.href = "/";
+        window.location.href = "/home";
     }
   }
   handleAskQuestion() {

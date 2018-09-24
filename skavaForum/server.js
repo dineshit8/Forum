@@ -6,7 +6,6 @@ var bodyParser = require('body-parser');
 var routes = require("./routes/routes.js");
 var cookieParser = require('cookie-parser'); 
 const bcrypt = require('bcrypt');
-io = require('socket.io');
 module.exports.bcrypt = bcrypt;
 const expressValidator = require('express-validator');
 var nodemailer = require('nodemailer');
@@ -36,16 +35,7 @@ app.use(function(req, res, next) {
   next();
 });
 routes(app);
-io.sockets.on('connection',function(socket){
-  socket.on('send message',function(data){
-      io.sockets.emit('new message',{message:data,username:socket.username});
-  });
 
-  socket.on('disconnect',function(data){
-      if(!socket.username) return;
-      usernames.splice(usernames.indexOf(socket.username),1);
-  });
-});
 if(process.env.NODE_ENV === 'production'){
   //set static folder
   app.use(express.static('build'));
