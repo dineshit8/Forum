@@ -145,6 +145,8 @@ exports.getProfile = function(req , res)
     {
         res.status(200).json({ message: "Please Login First" , "status":"Failure"});
     }
+ 	sessionReload(req);
+
 }
 exports.deleteAnswer = function(req, res)
 {
@@ -421,7 +423,7 @@ exports.forgotPwd = function(req,res)
                 const mailOptions = {  
                     to: req.body.mailId,  
                     from: 'passwordreset@demo.com',  
-                    subject: 'Node.js Password Reset',  
+                    subject: 'Skavaforum Password Reset',  
                     text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +  
                         'Please click on the following link, or paste this into your browser to complete the process:\n\n' +  
                         'http://'+ req.headers.host  +'/reset?' + manipulatedReq.token + '\n\n' +  

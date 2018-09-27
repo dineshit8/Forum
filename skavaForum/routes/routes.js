@@ -10,7 +10,7 @@ var appRouter = function(app){
     app.route("/api/rest/getRelatedQuestions").post(controllerObj.getRelatedQuestion);
 	app.route("/reset/:token").get(controllerObj.resetPassword);
     app.route("/reset/updatePassword").post(controllerObj.updatePaswword);
-    app.route("/api/rest/getQuestions").get(controllerObj.getQuestions);
+    app.route("/api/rest/getQuestions").post(controllerObj.getQuestions);
     app.route("/api/rest/getQuqAnsById").post(controllerObj.getQuqAnsById);
     app.route("/api/rest/getTagsByUserId").get(controllerObj.getTagsByUserId);
     app.route("/api/rest/getMailIdByUserId").post(controllerObj.getMailIdByUserId);
@@ -19,5 +19,6 @@ var appRouter = function(app){
     app.route("/api/rest/deleteAnswer").post(controllerObj.deleteAnswer);
     app.route("/api/rest/addComment").post(controllerObj.addComments);
     app.route("/api/rest/deleteComment").post(controllerObj.deleteComment);
+    app.route("/api/rest/socialLogin").post(controllerObj.handleSocialLogin);
 }
 module.exports = appRouter;

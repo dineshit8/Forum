@@ -26,10 +26,10 @@
   padding: 20px;
   margin-bottom: 10px;
 }
-.questionTitle{
+/*.questionTitle{
   width: 100%;
   cursor: pointer;
-}
+}*/
 .relatedTag{
   box-sizing: border-box;
   padding: 2px;
@@ -43,11 +43,6 @@
 .searchPage .questionDesc{
   font-size: 18px;
   cursor: pointer;
-}
-.tagsName{
-  float: left;
-  width: 100%;
-  padding-top: 15px;
 }
 .popularTags{
   float: left;

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Lato|Sawarabi+Mincho');
 html , body , #root{
   width: 100%;
   height: 100%;
@@ -165,6 +167,7 @@ html , body , #root{
   top: 85px;
   padding: 40px 40px 65px 40px;
   width: 95%;
+  font-family: 'Lato', sans-serif;
 }
 .tagsBackground
 {
@@ -174,10 +177,12 @@ html , body , #root{
     box-shadow: 0px 1px 1px 2px #fff;
     background: #cee0ed;
     color: #33658a;
-    padding: 2px;
+    padding: 5px;
     box-sizing: border-box;
     text-transform: capitalize;
-    font-size: 16px;
+    font-size: 12px;
+    border-radius: 3px;
+    user-select: none;
 }
 .social_login_cont {
     margin-top: 20px;
@@ -239,4 +244,13 @@ html , body , #root{
 .homePage {
   max-width: 1200px;
   margin: auto;
+}
+pre {
+  margin-bottom: 1em;
+  padding: 5px;
+  width: auto;
+  max-height: 450px;
+  overflow: auto;
+  font-size: 13px;
+  background-color: #eff0f1;
 }

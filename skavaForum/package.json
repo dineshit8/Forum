@@ -49,6 +49,7 @@
     "react-scripts": "^1.1.4",
     "react-social-login": "^3.4.2",
     "socket.io": "^2.1.1",
-    "socket.io-client": "^2.1.1"
+    "socket.io-client": "^2.1.1",
+    "web-push": "^3.3.3"
   }
 }

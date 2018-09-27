@@ -26,7 +26,7 @@ render(){
 			                     <div className="questionDesc" qid={questions.questionId} onClick={self.navigateQuestion.bind(this)} >{questions.title}</div> <br/>
 			                      <div className="questionType"><div dangerouslySetInnerHTML={{ __html: questions.description }}/></div> <br/>
 			                      <div className="questionTitle">
-			                      		<div className="relatedTagName">{questions.relatedTags.map(function(tags, index){return <span className="tagsBackground">{tags}</span>})}</div>
+			                      		<div className="questionTag">{questions.relatedTags.map(function(tags, index){return <span className="tagsBackground">{tags}</span>})}</div>
 			                      </div> 
 			                    </div>;
 		                	})
@@ -39,7 +39,7 @@ render(){
             		{
             			this.props.searchData.map(function(tagid,i){
 			                    return <div className={"tag_0" + i}>
-			                      		<div className="relatedTag tagAlign">{tagid.relatedTags.map(function(tags, index){return tags})}</div>
+			                      		<div className="tagsBackground tagAlign">{tagid.relatedTags.map(function(tags, index){return tags})}</div>
 			                    </div>;
 			                })
             		}	

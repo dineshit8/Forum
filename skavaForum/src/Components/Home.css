@@ -49,7 +49,7 @@
 .tagsName{
     float: left;
     width: 100%;
-    padding-top: 15px;
+    /*padding-top: 15px;*/
 }
 .popularTags{
     float: left;
@@ -88,4 +88,8 @@
 button.postQuestion , #post_submitbtn
 {
     margin-left: 20px;
+}
+.homePage .questionTitle
+{
+    cursor: pointer;
 }
