@@ -9,7 +9,7 @@
     "nodemon": "node server.js",
     "build": "react-scripts build"
   },
-  "author": "linga",
+  "author": "linga, dinesh",
   "license": "ISC",
   "devDependencies": {
     "babel": "^6.23.0",
